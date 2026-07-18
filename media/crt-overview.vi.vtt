@@ -1,0 +1,19 @@
+WEBVTT
+
+00:00.000 --> 00:08.000
+Từ ba điểm đến một giá trị C. Hệ thống không lưu trực tiếp GK, CK và TB trong bảng điểm mã hóa.
+
+00:08.000 --> 00:22.000
+React đọc Excel và hiển thị; Node giữ session, role và nghiệp vụ; Java xử lý CRT; SQL Server lưu số nguyên tố, bản mã và log.
+
+00:22.000 --> 00:36.000
+Điểm được nhân 10 thành số nguyên. PIN và public key Diffie–Hellman mô phỏng tạo cùng shared secret ở hai phía.
+
+00:36.000 --> 00:52.000
+SHA-256 băm ngữ cảnh và shared secret, rồi ánh xạ kết quả vào ba dòng liên tiếp của bảng năm triệu số nguyên tố.
+
+00:52.000 --> 01:08.000
+CRT ghép ba phần dư thành C. Với [85,70,78] và [101,103,107], nghiệm chuẩn là 110074.
+
+01:08.000 --> 01:20.000
+Sinh viên có PIN đúng tái lập đúng prime, lấy C modulo từng prime và chia 10. CRT là prototype học thuật, không thay thế mã hóa hiện đại.
