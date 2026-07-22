@@ -1,19 +1,1041 @@
 WEBVTT
 
-00:00.000 --> 00:08.000
-Từ ba điểm đến một giá trị C. Hệ thống không lưu trực tiếp GK, CK và TB trong bảng điểm mã hóa.
+1
+00:00:00.450 --> 00:00:07.342
+Chào mừng bạn đến với bài giảng đầy đủ về hệ thống quản lý điểm sinh viên có tích hợp định lý số dư Trung Hoa, hay CRT.
 
-00:08.000 --> 00:22.000
-React đọc Excel và hiển thị; Node giữ session, role và nghiệp vụ; Java xử lý CRT; SQL Server lưu số nguyên tố, bản mã và log.
+2
+00:00:07.342 --> 00:00:10.238
+Video này không chỉ giới thiệu công thức toán học.
 
-00:22.000 --> 00:36.000
-Điểm được nhân 10 thành số nguyên. PIN và public key Diffie–Hellman mô phỏng tạo cùng shared secret ở hai phía.
+3
+00:00:10.238 --> 00:00:26.628
+Chúng ta sẽ đi xuyên suốt toàn bộ sản phẩm: từ thao tác của giảng viên trên giao diện, cách frontend đọc file Excel, cách backend kiểm tra quyền và dữ liệu, cách Java chọn vùng số nguyên tố, tạo giá trị C, lưu C vào SQL Server, cho đến quá trình sinh viên nhập PIN để khôi phục điểm.
 
-00:36.000 --> 00:52.000
-SHA-256 băm ngữ cảnh và shared secret, rồi ánh xạ kết quả vào ba dòng liên tiếp của bảng năm triệu số nguyên tố.
+4
+00:00:26.628 --> 00:00:35.083
+Phần cuối sẽ giải thích chức năng đổi PIN, cơ chế mã hóa lại dữ liệu, các kịch bản kiểm thử và những giới hạn bảo mật cần nói rõ khi bảo vệ đồ án.
 
-00:52.000 --> 01:08.000
-CRT ghép ba phần dư thành C. Với [85,70,78] và [101,103,107], nghiệm chuẩn là 110074.
+5
+00:00:35.083 --> 00:00:45.450
+Sau video, bạn cần trả lời được ba câu hỏi: dữ liệu nào thực sự được lưu, vì sao cùng một giá trị C có thể chứa ba điểm, và vì sao đổi PIN bắt buộc phải mã hóa lại các bản ghi cũ.
 
-01:08.000 --> 01:20.000
-Sinh viên có PIN đúng tái lập đúng prime, lấy C modulo từng prime và chia 10. CRT là prototype học thuật, không thay thế mã hóa hiện đại.
+6
+00:00:46.450 --> 00:00:53.454
+Trong một hệ thống quản lý đào tạo thông thường, điểm giữa kỳ, điểm cuối kỳ và điểm trung bình thường được lưu thành ba cột số.
+
+7
+00:00:53.454 --> 00:01:06.855
+Cách này thuận tiện cho truy vấn, nhưng có một rủi ro rõ ràng: người có quyền đọc database, bản sao lưu hoặc file xuất dữ liệu có thể nhìn thấy ngay điểm của toàn bộ sinh viên mà không cần đi qua giao diện và quy trình phân quyền của ứng dụng.
+
+8
+00:01:06.855 --> 00:01:12.426
+Đăng nhập và phân quyền vẫn cần thiết, nhưng chúng chủ yếu kiểm soát đường đi hợp lệ ở tầng ứng dụng.
+
+9
+00:01:12.426 --> 00:01:18.602
+Đề tài đặt thêm một yêu cầu ở tầng lưu trữ: trong bảng điểm mã hóa, không lưu trực tiếp ba giá trị GK, CK và TB.
+
+10
+00:01:18.602 --> 00:01:28.750
+Thay vào đó, hệ thống chuẩn hóa chúng thành số nguyên, kết hợp bằng CRT để tạo một giá trị đại diện gọi là C, rồi chỉ khôi phục điểm khi người dùng hợp lệ thực hiện đúng luồng giải mã.
+
+11
+00:01:29.750 --> 00:01:32.978
+Cần xác định đúng phạm vi để tránh khẳng định quá mức.
+
+12
+00:01:32.978 --> 00:01:40.092
+CRT là một định lý số học cho phép tìm một nghiệm duy nhất theo modulo tích của các modulo đôi một nguyên tố cùng nhau.
+
+13
+00:01:40.092 --> 00:01:45.114
+Trong đồ án, tính chất đó được dùng để biểu diễn ba điểm đã chuẩn hóa bằng một số C.
+
+14
+00:01:45.114 --> 00:01:51.332
+Tuy nhiên, CRT tự nó không cung cấp đầy đủ tính bí mật, xác thực và toàn vẹn như một hệ mật mã hiện đại.
+
+15
+00:01:51.332 --> 00:01:56.592
+Nếu một người có cả C và đúng ba số nguyên tố, họ chỉ cần lấy phần dư để khôi phục điểm.
+
+16
+00:01:56.592 --> 00:02:07.174
+Vì vậy, cách trình bày chính xác là: hệ thống minh họa cơ chế không lưu trực tiếp điểm thật trong bảng DIEM_CRT và dẫn xuất bộ modulo từ ngữ cảnh cùng thông tin PIN, public key.
+
+17
+00:02:07.174 --> 00:02:13.750
+Khi triển khai thực tế, vẫn cần TLS, quản lý bí mật, mã hóa chuẩn, kiểm soát truy cập, giám sát và bảo vệ API.
+
+18
+00:02:14.750 --> 00:02:17.482
+Kiến trúc của hệ thống gồm bốn thành phần.
+
+19
+00:02:17.482 --> 00:02:22.620
+Frontend ReactJS hiển thị giao diện cho quản trị viên, giảng viên và sinh viên.
+
+20
+00:02:22.620 --> 00:02:29.514
+Frontend cũng đọc file Excel bằng thư viện xlsx, chuyển dữ liệu thành danh sách JSON rồi gửi sang backend.
+
+21
+00:02:29.514 --> 00:02:42.782
+Backend Node.js và Express là cổng tin cậy trung tâm: quản lý session, xác định vai trò, kiểm tra giảng viên có phụ trách học phần hay không, truy vấn SQL Server và điều phối các lời gọi đến dịch vụ Java.
+
+22
+00:02:42.782 --> 00:02:52.928
+Java Spring Boot chỉ tập trung vào thuật toán: tạo public key mô phỏng, tính shared secret, xác định prime range, mã hóa CRT và giải mã CRT bằng BigInteger.
+
+23
+00:02:52.928 --> 00:02:55.595
+Java không truy vấn trực tiếp SQL Server.
+
+24
+00:02:55.595 --> 00:03:04.050
+Backend nhận startIndex và endIndex từ Java, lấy đúng ba số nguyên tố trong bảng SNT rồi gửi danh sách số dạng chuỗi trở lại Java.
+
+25
+00:03:04.050 --> 00:03:12.050
+SQL Server lưu dữ liệu quản lý đào tạo, tài khoản, PIN hash, public key, bảng năm triệu số nguyên tố, log và bảng DIEM_CRT.
+
+26
+00:03:13.050 --> 00:03:14.501
+Hệ thống tách ba vai trò.
+
+27
+00:03:14.501 --> 00:03:18.274
+Admin có mã vai trò một và truy cập khu vực quản trị dữ liệu nền.
+
+28
+00:03:18.274 --> 00:03:24.718
+Giảng viên có mã vai trò hai và được phép nhập điểm, nhưng chỉ cho học phần gắn với mã giảng viên của chính họ.
+
+29
+00:03:24.718 --> 00:03:32.438
+Sinh viên có mã vai trò không và xem thông tin, thời khóa biểu, lịch sử đăng nhập, lịch sử đổi PIN và kết quả học tập của chính mình.
+
+30
+00:03:32.438 --> 00:03:35.515
+Điểm quan trọng là kiểm tra quyền phải nằm ở backend.
+
+31
+00:03:35.515 --> 00:03:39.404
+Frontend có thể ẩn nút, nhưng người dùng vẫn có thể tự gửi request.
+
+32
+00:03:39.404 --> 00:03:48.634
+Vì vậy endpoint nhập điểm phải xác thực session, xác nhận vai trò giảng viên, đối chiếu mã giảng viên với học phần và từ chối admin hoặc người không phụ trách.
+
+33
+00:03:48.634 --> 00:03:54.787
+Tương tự, endpoint xem điểm nên lấy mã sinh viên từ session, không tin một MSSV tùy ý do frontend gửi lên.
+
+34
+00:03:54.787 --> 00:03:58.967
+Đây là ranh giới giữa giao diện thuận tiện và kiểm soát bảo mật thực sự.
+
+35
+00:03:59.967 --> 00:04:03.807
+Để mã hóa và giải mã đúng, backend phải kết hợp nhiều bảng.
+
+36
+00:04:03.807 --> 00:04:07.974
+SINH_VIEN cung cấp mã sinh viên, mã lớp và public key sinh viên.
+
+37
+00:04:07.974 --> 00:04:09.992
+Từ lớp, hệ thống xác định khoa.
+
+38
+00:04:09.992 --> 00:04:14.484
+GIANG_VIEN cung cấp mã giảng viên, PIN hash và public key giảng viên.
+
+39
+00:04:14.484 --> 00:04:18.975
+HOC_PHAN xác định năm học, học kỳ, lớp, khoa và giảng viên phụ trách.
+
+40
+00:04:18.975 --> 00:04:23.597
+THOI_KHOA_BIEU liên kết sinh viên với các học phần mà họ được phép xem.
+
+41
+00:04:23.597 --> 00:04:27.047
+SNT lưu năm triệu số nguyên tố, mỗi số có một chỉ số.
+
+42
+00:04:27.047 --> 00:04:28.805
+DIEM_CRT là bảng trọng tâm.
+
+43
+00:04:28.805 --> 00:04:42.345
+Bảng này lưu MASV, MAHP, MAGV, giá trị C, năm học, học kỳ, mã khoa và mã lớp tại thời điểm mã hóa, public key sinh viên dùng trong ngữ cảnh CRT, phiên bản thuật toán, phiên bản khóa và thời gian tạo cập nhật.
+
+44
+00:04:42.345 --> 00:04:49.767
+Hệ thống không lưu startIndex, endIndex hoặc ba số nguyên tố trong DIEM_CRT; các giá trị đó được tính lại khi cần.
+
+45
+00:04:50.767 --> 00:04:53.539
+Toàn bộ hệ thống có thể hiểu bằng hai chiều.
+
+46
+00:04:53.539 --> 00:04:55.304
+Chiều thứ nhất là nhập điểm.
+
+47
+00:04:55.304 --> 00:04:59.904
+Giảng viên chọn năm học, học kỳ và học phần, nhập PIN và chọn file Excel.
+
+48
+00:04:59.904 --> 00:05:04.883
+Frontend đọc file, kiểm tra cấu trúc cơ bản rồi gửi danh sách điểm lên backend.
+
+49
+00:05:04.883 --> 00:05:14.588
+Backend kiểm tra quyền, xác thực PIN, lấy ngữ cảnh sinh viên và học phần, chuẩn hóa điểm, tính prime range, lấy ba số nguyên tố, gọi Java mã hóa và lưu C.
+
+50
+00:05:14.588 --> 00:05:16.226
+Chiều thứ hai là xem điểm.
+
+51
+00:05:16.226 --> 00:05:18.495
+Sinh viên chọn học phần và nhập PIN.
+
+52
+00:05:18.495 --> 00:05:28.641
+Backend xác định sinh viên từ session, kiểm tra PIN, lấy C và mã giảng viên từ DIEM_CRT, tính lại đúng prime range, lấy lại ba số nguyên tố rồi gọi Java giải mã.
+
+53
+00:05:28.641 --> 00:05:33.619
+Java trả ba số nguyên đã chuẩn hóa; backend chia cho mười và frontend hiển thị.
+
+54
+00:05:33.619 --> 00:05:40.867
+Hai chiều phải dùng cùng ngữ cảnh và tạo cùng shared secret, nếu không bộ prime sẽ khác và kết quả không chính xác.
+
+55
+00:05:41.867 --> 00:05:46.550
+Ở góc nhìn người dùng, luồng nhập điểm được thiết kế gần với thói quen thực tế.
+
+56
+00:05:46.550 --> 00:05:51.412
+Giảng viên không nhập từng dòng thủ công mà chọn đúng học phần rồi tải file Excel.
+
+57
+00:05:51.412 --> 00:05:54.910
+File mẫu có các cột định danh sinh viên và ba giá trị điểm.
+
+58
+00:05:54.910 --> 00:05:58.882
+Trước khi lưu, giao diện hiển thị danh sách để người dùng kiểm tra.
+
+59
+00:05:58.882 --> 00:06:04.277
+Khi bấm lưu, frontend tạo payload gồm courseId, academicYear, semester, PIN và mảng grades.
+
+60
+00:06:04.277 --> 00:06:08.723
+Mỗi phần tử có mã sinh viên, điểm giữa kỳ, điểm cuối kỳ và điểm trung bình.
+
+61
+00:06:08.723 --> 00:06:14.830
+Sau đó frontend gửi POST đến endpoint admin nhập điểm với credentials include để cookie session đi kèm.
+
+62
+00:06:14.830 --> 00:06:22.300
+Video demo cho thấy giao diện có thể tải danh sách sinh viên theo học phần, nhận dữ liệu Excel và trả thông báo sau khi xử lý.
+
+63
+00:06:22.300 --> 00:06:31.667
+Tuy nhiên, điều quan trọng không phải chỉ là nút import hoạt động, mà là dữ liệu sau nút đó phải đi qua đầy đủ các kiểm tra và mã hóa trước khi chạm database.
+
+64
+00:06:32.667 --> 00:06:36.571
+Một chi tiết thường bị trình bày sai là ai thực sự đọc file Excel.
+
+65
+00:06:36.571 --> 00:06:47.159
+Trình duyệt của người dùng có quyền truy cập file mà họ vừa chọn, nên frontend dùng thư viện xlsx để đọc workbook, lấy sheet, ánh xạ tên cột và tạo danh sách đối tượng JavaScript.
+
+66
+00:06:47.159 --> 00:06:50.235
+Backend không mở đường dẫn file trên máy người dùng.
+
+67
+00:06:50.235 --> 00:06:52.660
+Nó chỉ nhận JSON đã được frontend tạo ra.
+
+68
+00:06:52.660 --> 00:07:00.704
+Frontend có thể phát hiện sớm các lỗi như thiếu cột, thiếu mã sinh viên, ô điểm không phải số hoặc điểm nằm ngoài khoảng không đến mười.
+
+69
+00:07:00.704 --> 00:07:03.721
+Tuy vậy, kiểm tra frontend chỉ phục vụ trải nghiệm.
+
+70
+00:07:03.721 --> 00:07:07.388
+Backend vẫn phải kiểm tra lại tất cả vì request có thể bị sửa.
+
+71
+00:07:07.388 --> 00:07:12.535
+Nguyên tắc quan trọng là: không tin dữ liệu từ client, kể cả khi giao diện đã kiểm tra.
+
+72
+00:07:12.535 --> 00:07:17.267
+Chính backend mới là nơi quyết định bản ghi nào hợp lệ để đi tiếp vào luồng CRT.
+
+73
+00:07:18.267 --> 00:07:21.113
+Endpoint nhập điểm phải xử lý nhiều lớp kiểm tra.
+
+74
+00:07:21.113 --> 00:07:24.830
+Trước hết, request phải có session hợp lệ và vai trò giảng viên.
+
+75
+00:07:24.830 --> 00:07:32.322
+Tiếp theo backend tìm học phần theo mã học phần, năm học và học kỳ, rồi đối chiếu mã giảng viên phụ trách với tài khoản hiện tại.
+
+76
+00:07:32.322 --> 00:07:35.865
+Sau đó hệ thống xác thực PIN giảng viên bằng PIN hash đã lưu.
+
+77
+00:07:35.865 --> 00:07:42.661
+Với từng sinh viên, backend kiểm tra mã sinh viên tồn tại, thuộc ngữ cảnh học phần, có mã lớp, mã khoa và public key.
+
+78
+00:07:42.661 --> 00:07:45.565
+Ba điểm phải là số trong khoảng từ không đến mười.
+
+79
+00:07:45.565 --> 00:07:48.991
+Nếu thiếu bất kỳ dữ liệu nào, bản ghi đó không được mã hóa.
+
+80
+00:07:48.991 --> 00:07:59.446
+Backend còn kiểm tra Java service có trả prime range hợp lệ hay không, truy vấn SNT có lấy đủ đúng ba số nguyên tố hay không, và kết quả encrypt có chứa giá trị C hợp lệ hay không.
+
+81
+00:07:59.446 --> 00:08:04.267
+Những bước này ngăn tình trạng lưu một bản ghi nửa vời mà sau đó không thể giải mã.
+
+82
+00:08:05.267 --> 00:08:10.645
+CRT và BigInteger làm việc trên số nguyên, trong khi điểm thường có một chữ số thập phân.
+
+83
+00:08:10.645 --> 00:08:14.633
+Vì vậy backend chuẩn hóa mỗi điểm bằng cách nhân mười và làm tròn.
+
+84
+00:08:14.633 --> 00:08:17.111
+Điểm tám phẩy năm trở thành tám mươi lăm.
+
+85
+00:08:17.111 --> 00:08:18.803
+Điểm bảy trở thành bảy mươi.
+
+86
+00:08:18.803 --> 00:08:20.555
+Điểm mười trở thành một trăm.
+
+87
+00:08:20.555 --> 00:08:24.120
+Khi giải mã, backend chia kết quả cho mười để hiển thị lại.
+
+88
+00:08:24.120 --> 00:08:28.290
+Cần lưu ý độ chính xác của thiết kế này chỉ giữ một chữ số thập phân.
+
+89
+00:08:28.290 --> 00:08:36.508
+Ví dụ chín phẩy hai ba nhân mười bằng chín mươi hai phẩy ba; Math.round cho kết quả chín mươi hai, nên khi hiển thị sẽ là chín phẩy hai.
+
+90
+00:08:36.508 --> 00:08:40.859
+Đây không phải lỗi CRT mà là quyết định lượng tử hóa của bước chuẩn hóa.
+
+91
+00:08:40.859 --> 00:08:47.567
+Nếu muốn giữ hai chữ số thập phân, hệ thống phải nhân một trăm và chọn modulo lớn hơn giá trị tối đa một nghìn.
+
+92
+00:08:48.567 --> 00:08:50.399
+Bây giờ đến nền tảng toán học.
+
+93
+00:08:50.399 --> 00:08:56.263
+Giả sử p một, p hai và p ba là ba số nguyên tố khác nhau, nên chúng đôi một nguyên tố cùng nhau.
+
+94
+00:08:56.263 --> 00:09:03.959
+Ta muốn tìm C sao cho phần dư của C khi chia p một là a một, phần dư khi chia p hai là a hai và phần dư khi chia p ba là a ba.
+
+95
+00:09:03.959 --> 00:09:12.083
+Định lý số dư Trung Hoa bảo đảm hệ đồng dư này có một nghiệm duy nhất trong khoảng từ không đến M trừ một, với M bằng tích ba modulo.
+
+96
+00:09:12.083 --> 00:09:16.541
+Trong hệ thống, a một, a hai và a ba chính là GK, CK và TB sau chuẩn hóa.
+
+97
+00:09:16.541 --> 00:09:19.351
+Nhờ vậy, một số C có thể đại diện cho ba điểm.
+
+98
+00:09:19.351 --> 00:09:26.436
+Khi biết đúng p một, p hai và p ba, ta không cần chạy lại toàn bộ công thức để giải mã; chỉ cần lấy C modulo từng p.
+
+99
+00:09:26.436 --> 00:09:32.483
+Điều kiện quan trọng là mỗi p phải lớn hơn giá trị điểm tối đa sau chuẩn hóa, tức lớn hơn một trăm.
+
+100
+00:09:33.483 --> 00:09:36.377
+Công thức xây dựng nghiệm được thực hiện như sau.
+
+101
+00:09:36.377 --> 00:09:39.094
+Đầu tiên tính M bằng tích của ba số nguyên tố.
+
+102
+00:09:39.094 --> 00:09:41.633
+Với mỗi vị trí i, tính M i bằng M chia p i.
+
+103
+00:09:41.633 --> 00:09:44.763
+Sau đó tìm y i là nghịch đảo modulo của M i theo p i.
+
+104
+00:09:44.763 --> 00:09:48.366
+Cuối cùng cộng ba hạng a i nhân M i nhân y i và lấy modulo M.
+
+105
+00:09:48.366 --> 00:09:57.697
+Vì tích các số nguyên tố có thể vượt giới hạn số nguyên sáu mươi bốn bit, Java service dùng BigInteger cho toàn bộ phép nhân, chia, modulo và modular inverse.
+
+106
+00:09:57.697 --> 00:10:06.024
+Trước khi tính, service kiểm tra số lượng điểm bằng số lượng prime, danh sách không rỗng, điểm không âm và mỗi điểm nhỏ hơn modulo tương ứng.
+
+107
+00:10:06.024 --> 00:10:13.583
+Nếu một điểm lớn hơn hoặc bằng prime, phép lấy dư sẽ không còn khôi phục được đúng giá trị ban đầu, nên request phải bị từ chối.
+
+108
+00:10:14.583 --> 00:10:17.266
+Hãy đi qua một ví dụ nhỏ để thấy rõ ý nghĩa.
+
+109
+00:10:17.266 --> 00:10:22.328
+Một sinh viên có điểm giữa kỳ tám phẩy năm, cuối kỳ bảy và trung bình bảy phẩy tám.
+
+110
+00:10:22.328 --> 00:10:25.987
+Sau chuẩn hóa, ta có tám mươi lăm, bảy mươi và bảy mươi tám.
+
+111
+00:10:25.987 --> 00:10:31.048
+Để dễ tính, giả sử ba modulo là một trăm lẻ một, một trăm lẻ ba và một trăm lẻ bảy.
+
+112
+00:10:31.048 --> 00:10:36.353
+Đây chỉ là ví dụ minh họa; hệ thống thật lấy các prime ở vị trí rất lớn trong bảng SNT.
+
+113
+00:10:36.353 --> 00:10:45.256
+Bài toán trở thành tìm C sao cho C chia một trăm lẻ một dư tám mươi lăm, chia một trăm lẻ ba dư bảy mươi, và chia một trăm lẻ bảy dư bảy mươi tám.
+
+114
+00:10:45.256 --> 00:10:50.683
+Áp dụng công thức CRT thu được một nghiệm là một trăm mười nghìn không trăm bảy mươi bốn.
+
+115
+00:10:51.683 --> 00:10:51.881
+Bây giờ kiểm tra ngược.
+
+116
+00:10:51.881 --> 00:10:52.610
+Một trăm mười nghìn không trăm bảy mươi bốn modulo một trăm lẻ một bằng tám mươi lăm.
+
+117
+00:10:52.610 --> 00:10:52.919
+Modulo một trăm lẻ ba bằng bảy mươi.
+
+118
+00:10:52.919 --> 00:10:53.271
+Modulo một trăm lẻ bảy bằng bảy mươi tám.
+
+119
+00:10:53.271 --> 00:10:53.906
+Chia cả ba kết quả cho mười, ta trở lại tám phẩy năm, bảy và bảy phẩy tám.
+
+120
+00:10:53.906 --> 00:10:54.429
+Database có thể lưu C thay cho ba cột điểm trong bảng mã hóa.
+
+121
+00:10:54.429 --> 00:10:54.892
+Nhưng cần nhắc lại: C không phải một bí mật tuyệt đối.
+
+122
+00:10:54.892 --> 00:10:55.304
+Nếu bộ prime bị lộ, khôi phục điểm là trực tiếp.
+
+123
+00:10:55.304 --> 00:10:56.600
+Vì vậy thiết kế dùng ngữ cảnh và shared secret để xác định vị trí prime, đồng thời phải bảo vệ backend, public key, PIN, session và quyền đọc bảng SNT.
+
+124
+00:10:57.600 --> 00:11:01.239
+Hệ thống không dùng một bộ prime cố định cho tất cả sinh viên.
+
+125
+00:11:01.239 --> 00:11:06.814
+Để hai phía có thể tái lập cùng vùng prime, Java service mô phỏng trao đổi khóa Diffie–Hellman.
+
+126
+00:11:06.814 --> 00:11:13.093
+Mỗi người có PIN đóng vai trò số mũ bí mật và public key bằng g lũy thừa PIN modulo một số nguyên tố lớn P.
+
+127
+00:11:13.093 --> 00:11:17.612
+Khi mã hóa, giảng viên dùng public key của sinh viên lũy thừa PIN giảng viên.
+
+128
+00:11:17.612 --> 00:11:22.131
+Khi giải mã, sinh viên dùng public key của giảng viên lũy thừa PIN sinh viên.
+
+129
+00:11:22.131 --> 00:11:29.232
+Do tính chất lũy thừa modulo, hai kết quả đều tương ứng với g lũy thừa tích hai PIN modulo P, nên tạo cùng shared secret.
+
+130
+00:11:29.232 --> 00:11:34.573
+Đây là lý do hai luồng dùng cặp đầu vào khác nhau nhưng vẫn dẫn xuất được cùng prime range.
+
+131
+00:11:34.573 --> 00:11:43.200
+Trong báo cáo và khi thuyết trình, cần gọi đây là cơ chế mô phỏng phục vụ đồ án, không tuyên bố đây là hệ thống quản lý khóa production hoàn chỉnh.
+
+132
+00:11:44.200 --> 00:11:52.314
+Sau khi có shared secret, Java ghép nó với ngữ cảnh của bản ghi: mã khoa, mã lớp, mã sinh viên, mã học phần và chuỗi phiên bản CRT_V1.
+
+133
+00:11:52.314 --> 00:11:56.916
+Chuỗi kết quả được băm bằng SHA-256 rồi diễn giải thành một số nguyên lớn B.
+
+134
+00:11:56.916 --> 00:12:03.395
+Việc đưa ngữ cảnh vào hàm băm giúp cùng một cặp người dùng nhưng khác học phần có thể nhận vùng prime khác.
+
+135
+00:12:03.395 --> 00:12:09.148
+Mã phiên bản giúp hệ thống có khả năng phân biệt thuật toán nếu sau này thay đổi cách dẫn xuất.
+
+136
+00:12:09.148 --> 00:12:21.319
+Khi mã hóa lại sau đổi PIN, hệ thống phải dùng đúng ngữ cảnh đã lưu tại thời điểm mã hóa, không chỉ đọc dữ liệu quản lý hiện tại, vì sinh viên có thể chuyển lớp hoặc thông tin học phần có thể thay đổi.
+
+137
+00:12:21.319 --> 00:12:25.800
+Đó là lý do DIEM_CRT lưu MAKHOA_CRT, MALOP_CRT và một số trường phiên bản.
+
+138
+00:12:26.800 --> 00:12:30.641
+Bảng SNT trong dữ liệu thử nghiệm chứa năm triệu số nguyên tố.
+
+139
+00:12:30.641 --> 00:12:34.667
+Java không trả trực tiếp prime mà trả chỉ số bắt đầu và kết thúc.
+
+140
+00:12:34.667 --> 00:12:40.738
+Đầu tiên tính safeRange bằng N trừ giá trị điểm tối đa sau chuẩn hóa, trừ số lượng điểm, cộng một.
+
+141
+00:12:40.738 --> 00:12:49.163
+Với N bằng năm triệu, MAX_SCORE_X10 bằng một trăm và NUMBER_OF_GRADES bằng ba, khoảng an toàn giúp startIndex không chạy vượt cuối bảng.
+
+142
+00:12:49.163 --> 00:12:51.207
+Sau đó K bằng B modulo safeRange.
+
+143
+00:12:51.207 --> 00:12:55.544
+StartIndex bằng K cộng một trăm, và endIndex bằng startIndex cộng hai.
+
+144
+00:12:55.544 --> 00:12:58.331
+Backend truy vấn ba dòng liên tiếp trong SNT.
+
+145
+00:12:58.331 --> 00:13:04.774
+Việc cộng một trăm đẩy chỉ số qua vùng đầu; do dãy prime tăng dần, các prime lấy được lớn hơn miền điểm.
+
+146
+00:13:04.774 --> 00:13:11.217
+Hệ thống phải xác nhận truy vấn trả đúng ba số và mỗi số đều là chuỗi số hợp lệ trước khi gửi sang Java.
+
+147
+00:13:12.217 --> 00:13:15.381
+GradeCrtController công bố bốn endpoint nội bộ.
+
+148
+00:13:15.381 --> 00:13:18.545
+Public-key nhận PIN và trả public key mô phỏng.
+
+149
+00:13:18.545 --> 00:13:26.690
+Prime-range nhận mã khoa, mã lớp, MSSV, mã học phần, PIN và public key của phía đối diện, rồi trả startIndex và endIndex.
+
+150
+00:13:26.690 --> 00:13:32.345
+Encrypt nhận danh sách điểm chuẩn hóa cùng danh sách prime và trả C dưới dạng chuỗi.
+
+151
+00:13:32.345 --> 00:13:36.990
+Decrypt nhận C và danh sách prime rồi trả plaintext gồm ba số nguyên.
+
+152
+00:13:36.990 --> 00:13:43.588
+GradeCrtService thực hiện Diffie–Hellman mô phỏng, SHA-256, CRT bằng BigInteger và kiểm tra input.
+
+153
+00:13:43.588 --> 00:13:47.492
+Java không biết mật khẩu SQL Server và không truy vấn SNT.
+
+154
+00:13:47.492 --> 00:13:50.521
+Node mới là thành phần lấy prime từ database.
+
+155
+00:13:50.521 --> 00:13:59.542
+Cách tách này tạo ranh giới rõ: Java là dịch vụ tính toán, còn backend chịu trách nhiệm xác thực, nghiệp vụ và quyền truy cập dữ liệu.
+
+156
+00:13:59.542 --> 00:14:07.217
+Trong triển khai thực tế, các endpoint nội bộ cũng cần mạng riêng, xác thực giữa service, timeout và health check.
+
+157
+00:14:08.217 --> 00:14:15.079
+Với mỗi dòng hợp lệ trong danh sách Excel, backend lấy thông tin sinh viên, lớp, khoa, học phần và giảng viên.
+
+158
+00:14:15.079 --> 00:14:17.825
+Ba điểm được chuẩn hóa thành mảng số nguyên.
+
+159
+00:14:17.825 --> 00:14:22.067
+Backend gọi prime-range bằng PIN giảng viên và public key sinh viên.
+
+160
+00:14:22.067 --> 00:14:27.994
+Sau khi nhận chỉ số, backend truy vấn SNT và gửi ba prime cùng mảng điểm sang endpoint encrypt.
+
+161
+00:14:27.994 --> 00:14:29.678
+Java trả C dưới dạng chuỗi.
+
+162
+00:14:29.678 --> 00:14:35.418
+Backend lưu hoặc cập nhật bản ghi theo cặp MASV và MAHP, đồng thời lưu MAGV và ngữ cảnh CRT.
+
+163
+00:14:35.418 --> 00:14:37.664
+Điểm rõ không được ghi vào DIEM_CRT.
+
+164
+00:14:37.664 --> 00:14:44.028
+Tuy nhiên trong quá trình xử lý, plaintext vẫn tồn tại tạm thời ở frontend, request và bộ nhớ backend.
+
+165
+00:14:44.028 --> 00:14:48.457
+Vì vậy không được ghi toàn bộ request body, PIN hoặc mảng điểm vào log.
+
+166
+00:14:48.457 --> 00:14:57.317
+Khi trình bày, câu đúng là không lưu trực tiếp điểm thật trong bảng DIEM_CRT, chứ không phải điểm thật không bao giờ xuất hiện trong hệ thống.
+
+167
+00:14:58.317 --> 00:15:00.819
+Khi demo, đây là màn hình cần phóng to.
+
+168
+00:15:00.819 --> 00:15:03.898
+Truy vấn DIEM_CRT theo đúng MSSV và mã học phần.
+
+169
+00:15:03.898 --> 00:15:09.223
+Người xem phải thấy MASV, MAHP, MAGV, C, các trường ngữ cảnh và thời gian cập nhật.
+
+170
+00:15:09.223 --> 00:15:14.612
+C được lưu dưới dạng NVARCHAR MAX vì kết quả BigInteger có thể vượt giới hạn BIGINT.
+
+171
+00:15:14.612 --> 00:15:17.564
+Bảng trọng tâm không chứa ba cột GK, CK và TB.
+
+172
+00:15:17.564 --> 00:15:25.712
+StartIndex, endIndex và danh sách prime cũng không được lưu; chúng được tính lại trong bộ nhớ khi mã hóa, giải mã hoặc đổi PIN.
+
+173
+00:15:25.712 --> 00:15:36.041
+Nếu muốn chứng minh mạnh hơn, hãy ghi lại C trước khi đổi PIN, thực hiện đổi PIN, rồi truy vấn lại để cho thấy C mới khác C cũ nhưng điểm giải mã vẫn giữ nguyên.
+
+174
+00:15:36.041 --> 00:15:40.917
+Đây là bằng chứng trực quan tốt hơn nhiều so với chỉ nói thuật toán đã chạy.
+
+175
+00:15:41.917 --> 00:15:45.597
+Khi sinh viên xem điểm, frontend gửi mã học phần và PIN.
+
+176
+00:15:45.597 --> 00:15:51.445
+Backend phải lấy MSSV từ session hiện tại để tránh người dùng tự thay MSSV trong request.
+
+177
+00:15:51.445 --> 00:15:56.308
+Sau khi xác thực PIN hash, backend tìm bản ghi DIEM_CRT theo MSSV và MAHP.
+
+178
+00:15:56.308 --> 00:16:01.171
+Nếu có, backend lấy C và MAGV, rồi lấy public key hiện tại của giảng viên.
+
+179
+00:16:01.171 --> 00:16:05.771
+Java prime-range được gọi bằng PIN sinh viên và public key giảng viên.
+
+180
+00:16:05.771 --> 00:16:14.248
+Nhờ tính chất Diffie–Hellman mô phỏng, shared secret trùng với lúc giảng viên mã hóa bằng PIN giảng viên và public key sinh viên.
+
+181
+00:16:14.248 --> 00:16:23.580
+Backend lấy đúng ba prime, gọi decrypt, kiểm tra plaintext có đủ ba số trong miền không đến một trăm, chia mười và trả GK, CK, TB về frontend.
+
+182
+00:16:23.580 --> 00:16:27.917
+Người dùng chỉ thấy thao tác quen thuộc; toàn bộ CRT nằm phía sau.
+
+183
+00:16:28.917 --> 00:16:31.619
+Luồng giải mã cần phân biệt rõ các trường hợp.
+
+184
+00:16:31.619 --> 00:16:35.554
+Nếu sinh viên nhập sai PIN, hệ thống dừng và trả thông báo sai PIN.
+
+185
+00:16:35.554 --> 00:16:42.897
+Nếu PIN đúng nhưng DIEM_CRT chưa có bản ghi, thông báo nên là chưa có điểm cho môn học này, không phải lỗi kỹ thuật khó hiểu.
+
+186
+00:16:42.897 --> 00:16:51.885
+Nếu thiếu public key giảng viên, không lấy đủ ba prime hoặc Java trả plaintext sai kích thước, backend phải từ chối và không hiển thị giá trị ngẫu nhiên.
+
+187
+00:16:51.885 --> 00:17:01.753
+Thông báo gửi cho người dùng cần ngắn gọn, trong khi log máy chủ có thể ghi mã lỗi và request ID nhưng không ghi PIN, C kèm toàn bộ ngữ cảnh bí mật hoặc plaintext điểm.
+
+188
+00:17:01.753 --> 00:17:07.686
+Ngoài ra nên giới hạn số lần thử PIN, khóa tạm thời sau nhiều lần sai và ghi nhận sự kiện bất thường.
+
+189
+00:17:07.686 --> 00:17:10.917
+Đây là các lớp bảo vệ bổ sung mà CRT không tự cung cấp.
+
+190
+00:17:11.917 --> 00:17:17.206
+PIN tham gia vào shared secret và prime range, vì vậy đổi PIN làm thay đổi bộ prime.
+
+191
+00:17:17.206 --> 00:17:24.574
+Nếu hệ thống chỉ cập nhật PIN hash, các bản ghi C cũ vẫn gắn với prime cũ và người dùng sẽ không khôi phục đúng điểm.
+
+192
+00:17:24.574 --> 00:17:26.652
+Quy trình đúng gồm bốn giai đoạn.
+
+193
+00:17:26.652 --> 00:17:30.997
+Một, xác thực PIN hiện tại và lấy toàn bộ bản ghi DIEM_CRT liên quan.
+
+194
+00:17:30.997 --> 00:17:35.909
+Hai, với từng bản ghi, tái lập range cũ và giải mã C cũ thành ba số chuẩn hóa.
+
+195
+00:17:35.909 --> 00:17:40.380
+Ba, tạo public key mới, tính range mới và mã hóa plaintext thành C mới.
+
+196
+00:17:40.380 --> 00:17:45.859
+Bốn, giải mã thử C mới bằng prime mới và so sánh chính xác với plaintext trước khi ghi.
+
+197
+00:17:45.859 --> 00:17:49.637
+Khi sinh viên đổi PIN, mọi bản ghi của sinh viên được xử lý.
+
+198
+00:17:49.637 --> 00:17:54.297
+Khi giảng viên đổi PIN, mọi bản ghi do giảng viên đó phụ trách được xử lý.
+
+199
+00:17:54.297 --> 00:17:58.517
+Video demo nên chứng minh C cũ khác C mới trong khi điểm không đổi.
+
+200
+00:17:59.517 --> 00:18:06.414
+Mã hóa lại nhiều bản ghi có thể mất thời gian, nên source tổ chức thành job nền và frontend định kỳ hỏi trạng thái.
+
+201
+00:18:06.414 --> 00:18:10.252
+Tuy nhiên tính nhất quán vẫn phải được bảo đảm bằng transaction.
+
+202
+00:18:10.252 --> 00:18:20.328
+Backend chuẩn bị kết quả mới trong bộ nhớ, giải mã thử để xác nhận, sau đó mở transaction, khóa từng dòng hoặc dùng điều kiện kiểm tra C cũ chưa bị phiên khác thay đổi.
+
+203
+00:18:20.328 --> 00:18:28.185
+Chỉ khi toàn bộ bản ghi cập nhật thành công, hệ thống mới cập nhật PIN hash, public key, key version, thời gian đổi PIN và lịch sử.
+
+204
+00:18:28.185 --> 00:18:32.863
+Nếu bất kỳ bản ghi nào thất bại, transaction rollback, giữ nguyên PIN và C cũ.
+
+205
+00:18:32.863 --> 00:18:37.781
+Cách này tránh trạng thái một phần môn học dùng PIN cũ, phần còn lại dùng PIN mới.
+
+206
+00:18:37.781 --> 00:18:47.017
+Hướng production cần đưa job và trạng thái ra hàng đợi hoặc kho bền vững, vì lưu job trong RAM có thể mất khi process restart hoặc khi chạy nhiều replica.
+
+207
+00:18:48.017 --> 00:18:51.217
+Hệ thống đã có lịch sử đăng nhập và lịch sử đổi PIN.
+
+208
+00:18:51.217 --> 00:18:57.247
+Sau đăng nhập thành công, backend ghi tài khoản, thời gian, địa chỉ IP và vị trí tương đối nếu có.
+
+209
+00:18:57.247 --> 00:19:01.863
+Lịch sử đổi PIN chỉ nên được ghi khi toàn bộ quá trình mã hóa lại hoàn tất.
+
+210
+00:19:01.863 --> 00:19:09.863
+Để vận hành tốt hơn, có thể thêm audit cho nhập điểm, cập nhật điểm, yêu cầu giải mã, lỗi Java service và thay đổi phiên bản khóa.
+
+211
+00:19:09.863 --> 00:19:11.832
+Nhưng log phải được lọc dữ liệu.
+
+212
+00:19:11.832 --> 00:19:17.678
+Không được console log toàn bộ request body của endpoint nhập điểm vì body chứa PIN và điểm rõ.
+
+213
+00:19:17.678 --> 00:19:21.678
+Không nên ghi shared secret, ba prime hoặc plaintext sau giải mã.
+
+214
+00:19:21.678 --> 00:19:28.878
+Log phù hợp gồm request ID, tài khoản, vai trò, mã học phần, số lượng bản ghi, trạng thái, thời gian xử lý và mã lỗi.
+
+215
+00:19:28.878 --> 00:19:32.817
+Đây là nguyên tắc rất quan trọng khi đề tài mang chủ đề bảo mật.
+
+216
+00:19:33.817 --> 00:19:39.218
+Một video hoặc báo cáo thực nghiệm thuyết phục cần có cả đường thành công và đường lỗi.
+
+217
+00:19:39.218 --> 00:19:43.439
+Với đăng nhập, kiểm tra tài khoản đúng, sai và vai trò không hợp lệ.
+
+218
+00:19:43.439 --> 00:19:49.958
+Với nhập Excel, kiểm tra file đúng, thiếu cột, MSSV không tồn tại, điểm âm, điểm lớn hơn mười và PIN sai.
+
+219
+00:19:49.958 --> 00:19:53.683
+Kiểm tra giảng viên không thể nhập học phần không phụ trách.
+
+220
+00:19:53.683 --> 00:20:02.312
+Với giải mã, kiểm tra session hết hạn, sai PIN, học phần chưa có điểm, thiếu public key, không lấy đủ prime và Java service không phản hồi.
+
+221
+00:20:02.312 --> 00:20:08.583
+Với CRT, kiểm tra encrypt rồi decrypt cho kết quả đúng và mọi plaintext nằm trong không đến một trăm.
+
+222
+00:20:08.583 --> 00:20:16.653
+Với đổi PIN, ghi C trước và sau, xác nhận điểm giữ nguyên, PIN cũ không còn hợp lệ và transaction rollback khi một bản ghi bị lỗi.
+
+223
+00:20:16.653 --> 00:20:22.117
+Các kết quả nên có expected result và actual result thay vì chỉ ghi chung là thành công.
+
+224
+00:20:23.117 --> 00:20:26.288
+Giới hạn thứ nhất: CRT không phải mã hóa chuẩn.
+
+225
+00:20:26.288 --> 00:20:29.526
+Có C và đúng prime thì lấy modulo là ra dữ liệu.
+
+226
+00:20:29.526 --> 00:20:37.825
+Giới hạn thứ hai: PIN có miền nhỏ; băm SHA-256 trực tiếp không salt không phù hợp để chống dò ngoại tuyến trong production.
+
+227
+00:20:37.825 --> 00:20:45.111
+Nên dùng Argon2, scrypt hoặc bcrypt với salt và tham số chi phí phù hợp, đồng thời rate limit ở online flow.
+
+228
+00:20:45.111 --> 00:20:48.417
+Giới hạn thứ ba: CRT không tự phát hiện C bị sửa.
+
+229
+00:20:48.417 --> 00:20:54.557
+Cần cơ chế toàn vẹn như HMAC hoặc mã hóa có xác thực, ví dụ AES-GCM, nếu xây sản phẩm thật.
+
+230
+00:20:54.557 --> 00:21:01.034
+Giới hạn thứ tư: session secret, mật khẩu database và PIN seed không được dùng giá trị mặc định.
+
+231
+00:21:01.034 --> 00:21:06.296
+Job đổi PIN lưu trong RAM không phù hợp khi restart hoặc scale nhiều instance.
+
+232
+00:21:06.296 --> 00:21:14.325
+Cuối cùng, quyền đọc SNT, public key, source và API phải được kiểm soát; không thể coi việc giấu thuật toán là bảo mật.
+
+233
+00:21:15.325 --> 00:21:23.423
+Để phát triển tiếp, trước hết tách middleware xác thực và phân quyền, kiểm tra quyền theo từng tài nguyên chứ không chỉ theo vai trò.
+
+234
+00:21:23.423 --> 00:21:28.842
+Sinh viên chỉ truy cập bản ghi của mình; giảng viên chỉ thao tác học phần mình phụ trách.
+
+235
+00:21:28.842 --> 00:21:35.235
+Toàn bộ kết nối phải dùng TLS, secret được đưa vào secret manager, khóa có quy trình rotation và thu hồi.
+
+236
+00:21:35.235 --> 00:21:40.593
+PIN và mật khẩu dùng hàm dẫn xuất chậm có salt, kết hợp rate limit, lockout và cảnh báo.
+
+237
+00:21:40.593 --> 00:21:50.639
+Nếu mục tiêu là bảo mật thực tế, có thể giữ CRT như lớp biểu diễn dữ liệu nhưng bọc giá trị hoặc ngữ cảnh nhạy cảm bằng AES-GCM, hoặc dùng HMAC để phát hiện sửa đổi.
+
+238
+00:21:50.639 --> 00:21:56.910
+Java service cần authentication nội bộ, health endpoint, timeout, retry có giới hạn và circuit breaker.
+
+239
+00:21:56.910 --> 00:22:04.825
+Job đổi PIN nên chạy trên hàng đợi bền vững, có trạng thái idempotent, khả năng tiếp tục sau restart và metric đo thời gian xử lý.
+
+240
+00:22:05.825 --> 00:22:09.071
+Trước khi kết thúc, hãy tự trả lời các câu hỏi sau.
+
+241
+00:22:09.071 --> 00:22:11.681
+Một, vì sao modulo phải lớn hơn một trăm?
+
+242
+00:22:11.681 --> 00:22:15.499
+Hai, nếu muốn giữ hai chữ số thập phân thì phải thay đổi gì?
+
+243
+00:22:15.499 --> 00:22:19.700
+Ba, vì sao frontend đọc Excel nhưng backend vẫn phải kiểm tra lại?
+
+244
+00:22:19.700 --> 00:22:22.501
+Bốn, tại sao Java không truy vấn SQL Server?
+
+245
+00:22:22.501 --> 00:22:29.502
+Năm, giảng viên và sinh viên dùng cặp PIN public key khác nhau nhưng vẫn tạo cùng shared secret bằng cách nào?
+
+246
+00:22:29.502 --> 00:22:32.684
+Sáu, startIndex được tính từ những thành phần nào?
+
+247
+00:22:32.684 --> 00:22:36.376
+Bảy, DIEM_CRT lưu dữ liệu gì và cố ý không lưu dữ liệu gì?
+
+248
+00:22:36.376 --> 00:22:38.540
+Tám, vì sao C được lưu dạng chuỗi?
+
+249
+00:22:38.540 --> 00:22:42.041
+Chín, điều gì xảy ra nếu đổi PIN mà không mã hóa lại C?
+
+250
+00:22:42.041 --> 00:22:47.005
+Mười, vì sao CRT không thể thay thế hoàn toàn AES hoặc một hệ mật mã hiện đại?
+
+251
+00:22:47.005 --> 00:22:52.033
+Nếu giải thích trôi chảy mười câu này, bạn đã nắm được phần cốt lõi của đề tài.
+
+252
+00:22:53.033 --> 00:22:58.487
+Tóm lại, giá trị của đồ án không nằm ở một màn hình CRUD hay một công thức đứng riêng lẻ.
+
+253
+00:22:58.487 --> 00:23:03.818
+Chuỗi bằng chứng đầy đủ là: giảng viên hợp lệ nhập dữ liệu cho học phần mình phụ trách;
+
+254
+00:23:03.818 --> 00:23:05.840
+frontend chuyển Excel thành JSON;
+
+255
+00:23:05.840 --> 00:23:08.843
+backend kiểm tra session, quyền, PIN và ngữ cảnh;
+
+256
+00:23:08.843 --> 00:23:12.029
+Java dẫn xuất prime range và mã hóa ba điểm thành C;
+
+257
+00:23:12.029 --> 00:23:16.993
+SQL Server lưu C cùng ngữ cảnh thay vì lưu trực tiếp GK, CK và TB trong DIEM_CRT;
+
+258
+00:23:16.993 --> 00:23:21.527
+sinh viên hợp lệ nhập PIN để tái lập cùng bộ prime và khôi phục đúng điểm;
+
+259
+00:23:21.527 --> 00:23:29.432
+khi PIN thay đổi, hệ thống giải mã bằng tham số cũ, mã hóa lại bằng tham số mới trong transaction, tạo C mới nhưng bảo toàn điểm.
+
+260
+00:23:29.432 --> 00:23:40.033
+CRT trong dự án là một cơ chế học thuật có giới hạn, nhưng hệ thống đã minh họa rõ cách tích hợp toán học, cơ sở dữ liệu, web và bảo mật thành một luồng phần mềm hoàn chỉnh.
