@@ -1,1041 +1,3143 @@
 WEBVTT
 
+NOTE Phụ đề tiếng Việt đồng bộ với giọng đọc mới; thuật ngữ đã được Việt hóa.
+
 1
-00:00:00.450 --> 00:00:07.342
-Chào mừng bạn đến với bài giảng đầy đủ về hệ thống quản lý điểm sinh viên có tích hợp định lý số dư Trung Hoa, hay CRT.
+00:00:00.000 --> 00:00:07.019
+Chào mừng bạn đến với bài giảng đầy đủ về hệ thống quản lý điểm sinh viên có tích hợp định lý số dư Trung Hoa.
 
 2
-00:00:07.342 --> 00:00:10.238
-Video này không chỉ giới thiệu công thức toán học.
+00:00:07.219 --> 00:00:10.803
+bài giảng này không chỉ giới thiệu công thức toán học.
 
 3
-00:00:10.238 --> 00:00:26.628
-Chúng ta sẽ đi xuyên suốt toàn bộ sản phẩm: từ thao tác của giảng viên trên giao diện, cách frontend đọc file Excel, cách backend kiểm tra quyền và dữ liệu, cách Java chọn vùng số nguyên tố, tạo giá trị C, lưu C vào SQL Server, cho đến quá trình sinh viên nhập PIN để khôi phục điểm.
+00:00:11.003 --> 00:00:25.701
+Chúng ta sẽ đi xuyên suốt toàn bộ sản phẩm: từ thao tác của giảng viên trên giao diện, cách giao diện phía trước đọc tệp bảng tính, cách máy chủ phía sau kiểm tra quyền và dữ liệu, cách Java chọn vùng số nguyên tố,
 
 4
-00:00:26.628 --> 00:00:35.083
-Phần cuối sẽ giải thích chức năng đổi PIN, cơ chế mã hóa lại dữ liệu, các kịch bản kiểm thử và những giới hạn bảo mật cần nói rõ khi bảo vệ đồ án.
+00:00:25.901 --> 00:00:33.795
+tạo giá trị C, lưu C vào máy chủ cơ sở dữ liệu, cho đến quá trình sinh viên nhập mã số cá nhân để khôi phục điểm.
 
 5
-00:00:35.083 --> 00:00:45.450
-Sau video, bạn cần trả lời được ba câu hỏi: dữ liệu nào thực sự được lưu, vì sao cùng một giá trị C có thể chứa ba điểm, và vì sao đổi PIN bắt buộc phải mã hóa lại các bản ghi cũ.
+00:00:33.995 --> 00:00:44.704
+Phần cuối sẽ giải thích chức năng đổi mã số cá nhân, cơ chế mã hóa lại dữ liệu, các kịch bản kiểm thử và những giới hạn bảo mật cần nói rõ khi bảo vệ đồ án.
 
 6
-00:00:46.450 --> 00:00:53.454
-Trong một hệ thống quản lý đào tạo thông thường, điểm giữa kỳ, điểm cuối kỳ và điểm trung bình thường được lưu thành ba cột số.
+00:00:44.904 --> 00:00:53.693
+Sau bài giảng, bạn cần trả lời được ba câu hỏi: dữ liệu nào thực sự được lưu, vì sao cùng một giá trị C có thể chứa ba điểm,
 
 7
-00:00:53.454 --> 00:01:06.855
-Cách này thuận tiện cho truy vấn, nhưng có một rủi ro rõ ràng: người có quyền đọc database, bản sao lưu hoặc file xuất dữ liệu có thể nhìn thấy ngay điểm của toàn bộ sinh viên mà không cần đi qua giao diện và quy trình phân quyền của ứng dụng.
+00:00:53.893 --> 00:00:58.693
+và vì sao đổi mã số cá nhân bắt buộc phải mã hóa lại các bản ghi cũ.
 
 8
-00:01:06.855 --> 00:01:12.426
-Đăng nhập và phân quyền vẫn cần thiết, nhưng chúng chủ yếu kiểm soát đường đi hợp lệ ở tầng ứng dụng.
+00:00:59.393 --> 00:01:05.559
+bài giảng này được thiết kế như một buổi học dài, không phải một đoạn giới thiệu sản phẩm.
 
 9
-00:01:12.426 --> 00:01:18.602
-Đề tài đặt thêm một yêu cầu ở tầng lưu trữ: trong bảng điểm mã hóa, không lưu trực tiếp ba giá trị GK, CK và TB.
+00:01:05.759 --> 00:01:09.897
+Mô-đun đầu tiên giải thích bài toán, phạm vi và kiến trúc.
 
 10
-00:01:18.602 --> 00:01:28.750
-Thay vào đó, hệ thống chuẩn hóa chúng thành số nguyên, kết hợp bằng CRT để tạo một giá trị đại diện gọi là C, rồi chỉ khôi phục điểm khi người dùng hợp lệ thực hiện đúng luồng giải mã.
+00:01:10.097 --> 00:01:16.476
+Mô-đun thứ hai đi theo dữ liệu từ tệp bảng tính đến giao diện lập trình ứng dụng và cơ sở dữ liệu.
 
 11
-00:01:29.750 --> 00:01:32.978
-Cần xác định đúng phạm vi để tránh khẳng định quá mức.
+00:01:16.676 --> 00:01:22.521
+Mô-đun thứ ba giải thích định lý số dư Trung Hoa bằng công thức và một ví dụ số hoàn chỉnh.
 
 12
-00:01:32.978 --> 00:01:40.092
-CRT là một định lý số học cho phép tìm một nghiệm duy nhất theo modulo tích của các modulo đôi một nguyên tố cùng nhau.
+00:01:22.721 --> 00:01:28.908
+Mô-đun thứ tư mở cơ chế khóa công khai, bí mật dùng chung, hàm băm và vùng số nguyên tố.
 
 13
-00:01:40.092 --> 00:01:45.114
-Trong đồ án, tính chất đó được dùng để biểu diễn ba điểm đã chuẩn hóa bằng một số C.
+00:01:29.108 --> 00:01:33.097
+Mô-đun thứ năm đi qua luồng xem điểm và đổi mã số cá nhân.
 
 14
-00:01:45.114 --> 00:01:51.332
-Tuy nhiên, CRT tự nó không cung cấp đầy đủ tính bí mật, xác thực và toàn vẹn như một hệ mật mã hiện đại.
+00:01:33.297 --> 00:01:40.807
+Mô-đun thứ sáu phân tích triển khai, nạp dữ liệu khởi tạo dữ liệu, giao dịch và lỗi khi hệ thống bị gián đoạn.
 
 15
-00:01:51.332 --> 00:01:56.592
-Nếu một người có cả C và đúng ba số nguyên tố, họ chỉ cần lấy phần dư để khôi phục điểm.
+00:01:41.007 --> 00:01:45.551
+Mô-đun thứ bảy là mô hình đe dọa, kiểm thử và phép đo hiệu năng.
 
 16
-00:01:56.592 --> 00:02:07.174
-Vì vậy, cách trình bày chính xác là: hệ thống minh họa cơ chế không lưu trực tiếp điểm thật trong bảng DIEM_CRT và dẫn xuất bộ modulo từ ngữ cảnh cùng thông tin PIN, public key.
+00:01:45.751 --> 00:01:48.887
+Mô-đun cuối cùng chuẩn bị câu trả lời phản biện.
 
 17
-00:02:07.174 --> 00:02:13.750
-Khi triển khai thực tế, vẫn cần TLS, quản lý bí mật, mã hóa chuẩn, kiểm soát truy cập, giám sát và bảo vệ API.
+00:01:49.087 --> 00:01:56.041
+Khi trên màn hình xuất hiện tên tệp hoặc phạm vi dòng, hãy hiểu đó là vị trí cần mở khi thuyết trình.
 
 18
-00:02:14.750 --> 00:02:17.482
-Kiến trúc của hệ thống gồm bốn thành phần.
+00:01:56.241 --> 00:02:05.863
+Nội dung cố ý phân biệt ba lớp bằng chứng: điều báo cáo tuyên bố, điều mã nguồn thật sự thực hiện, và điều bài giảng phần trình diễn đã chứng minh.
 
 19
-00:02:17.482 --> 00:02:22.620
-Frontend ReactJS hiển thị giao diện cho quản trị viên, giảng viên và sinh viên.
+00:02:06.063 --> 00:02:10.436
+Nếu ba lớp không khớp, kết luận sẽ bám vào phần cài đặt thực tế.
 
 20
-00:02:22.620 --> 00:02:29.514
-Frontend cũng đọc file Excel bằng thư viện xlsx, chuyển dữ liệu thành danh sách JSON rồi gửi sang backend.
+00:02:11.136 --> 00:02:19.755
+Trong một hệ thống quản lý đào tạo thông thường, điểm giữa kỳ, điểm cuối kỳ và điểm trung bình thường được lưu thành ba cột số.
 
 21
-00:02:29.514 --> 00:02:42.782
-Backend Node.js và Express là cổng tin cậy trung tâm: quản lý session, xác định vai trò, kiểm tra giảng viên có phụ trách học phần hay không, truy vấn SQL Server và điều phối các lời gọi đến dịch vụ Java.
+00:02:19.955 --> 00:02:26.696
+Cách này thuận tiện cho truy vấn, nhưng có một rủi ro rõ ràng: người có quyền đọc cơ sở dữ liệu,
 
 22
-00:02:42.782 --> 00:02:52.928
-Java Spring Boot chỉ tập trung vào thuật toán: tạo public key mô phỏng, tính shared secret, xác định prime range, mã hóa CRT và giải mã CRT bằng BigInteger.
+00:02:26.896 --> 00:02:36.987
+bản sao lưu hoặc tệp xuất dữ liệu có thể nhìn thấy ngay điểm của toàn bộ sinh viên mà không cần đi qua giao diện và quy trình phân quyền của ứng dụng.
 
 23
-00:02:52.928 --> 00:02:55.595
-Java không truy vấn trực tiếp SQL Server.
+00:02:37.187 --> 00:02:43.757
+Đăng nhập và phân quyền vẫn cần thiết, nhưng chúng chủ yếu kiểm soát đường đi hợp lệ ở tầng ứng dụng.
 
 24
-00:02:55.595 --> 00:03:04.050
-Backend nhận startIndex và endIndex từ Java, lấy đúng ba số nguyên tố trong bảng SNT rồi gửi danh sách số dạng chuỗi trở lại Java.
+00:02:43.957 --> 00:02:53.984
+Đề tài đặt thêm một yêu cầu ở tầng lưu trữ: trong bảng điểm mã hóa, không lưu trực tiếp ba giá trị điểm giữa kỳ, điểm cuối kỳ và điểm trung bình.
 
 25
-00:03:04.050 --> 00:03:12.050
-SQL Server lưu dữ liệu quản lý đào tạo, tài khoản, PIN hash, public key, bảng năm triệu số nguyên tố, log và bảng DIEM_CRT.
+00:02:54.184 --> 00:03:03.187
+Thay vào đó, hệ thống chuẩn hóa chúng thành số nguyên, kết hợp bằng định lý số dư Trung Hoa để tạo một giá trị đại diện gọi là C,
 
 26
-00:03:13.050 --> 00:03:14.501
-Hệ thống tách ba vai trò.
+00:03:03.387 --> 00:03:08.293
+rồi chỉ khôi phục điểm khi người dùng hợp lệ thực hiện đúng luồng giải mã.
 
 27
-00:03:14.501 --> 00:03:18.274
-Admin có mã vai trò một và truy cập khu vực quản trị dữ liệu nền.
+00:03:08.993 --> 00:03:13.239
+Muốn đánh giá bảo mật đúng, trước hết phải liệt kê tài sản.
 
 28
-00:03:18.274 --> 00:03:24.718
-Giảng viên có mã vai trò hai và được phép nhập điểm, nhưng chỉ cho học phần gắn với mã giảng viên của chính họ.
+00:03:13.439 --> 00:03:17.876
+Tài sản hiển nhiên là ba điểm giữa kỳ, cuối kỳ và trung bình.
 
 29
-00:03:24.718 --> 00:03:32.438
-Sinh viên có mã vai trò không và xem thông tin, thời khóa biểu, lịch sử đăng nhập, lịch sử đổi PIN và kết quả học tập của chính mình.
+00:03:18.076 --> 00:03:23.687
+Nhưng giá trị C cũng là tài sản vì nó là biểu diễn có thể khôi phục của ba điểm.
 
 30
-00:03:32.438 --> 00:03:35.515
-Điểm quan trọng là kiểm tra quyền phải nằm ở backend.
+00:03:23.887 --> 00:03:29.689
+mật khẩu và mã số cá nhân quyết định khả năng đăng nhập hoặc tái lập vùng số nguyên tố.
 
 31
-00:03:35.515 --> 00:03:39.404
-Frontend có thể ẩn nút, nhưng người dùng vẫn có thể tự gửi request.
+00:03:29.889 --> 00:03:33.964
+tệp nhận dạng phiên đăng nhập đại diện cho một phiên đã xác thực.
 
 32
-00:03:39.404 --> 00:03:48.634
-Vì vậy endpoint nhập điểm phải xác thực session, xác nhận vai trò giảng viên, đối chiếu mã giảng viên với học phần và từ chối admin hoặc người không phụ trách.
+00:03:34.164 --> 00:03:41.375
+khóa công khai, bảng số nguyên tố và dữ liệu mô tả khoa, lớp, môn học tạo thành ngữ cảnh thuật toán.
 
 33
-00:03:48.634 --> 00:03:54.787
-Tương tự, endpoint xem điểm nên lấy mã sinh viên từ session, không tin một MSSV tùy ý do frontend gửi lên.
+00:03:41.575 --> 00:03:49.276
+Quyền ghi điểm còn quan trọng hơn quyền đọc, bởi một kẻ tấn công thay đổi C có thể làm sai kết quả học tập.
 
 34
-00:03:54.787 --> 00:03:58.967
-Đây là ranh giới giữa giao diện thuận tiện và kiểm soát bảo mật thực sự.
+00:03:49.476 --> 00:03:58.585
+tệp bảng tính trên máy giảng viên, nhật ký máy chủ và cơ sở dữ liệu sao lưu đều nằm ngoài giao diện nhưng vẫn chứa dữ liệu nhạy cảm.
 
 35
-00:03:59.967 --> 00:04:03.807
-Để mã hóa và giải mã đúng, backend phải kết hợp nhiều bảng.
+00:03:58.785 --> 00:04:03.905
+Vì vậy câu hỏi không chỉ là người lạ có nhìn thấy điểm trên trang web hay không.
 
 36
-00:04:03.807 --> 00:04:07.974
-SINH_VIEN cung cấp mã sinh viên, mã lớp và public key sinh viên.
+00:04:04.105 --> 00:04:16.543
+Cần hỏi thêm: nếu bị lộ cơ sở dữ liệu, bị đọc nhật ký, chiếm phiên đăng nhập, gọi trực tiếp giao diện lập trình ứng dụng hoặc có quyền ghi hệ quản trị cơ sở dữ liệu thì hệ thống còn
 
 37
-00:04:07.974 --> 00:04:09.992
-Từ lớp, hệ thống xác định khoa.
+00:04:16.743 --> 00:04:18.023
+bảo vệ điều gì.
 
 38
-00:04:09.992 --> 00:04:14.484
-GIANG_VIEN cung cấp mã giảng viên, PIN hash và public key giảng viên.
+00:04:18.223 --> 00:04:23.876
+Đây là lý do mô hình đe dọa của dự án phải rộng hơn mô hình người dùng bấm đúng nút.
 
 39
-00:04:14.484 --> 00:04:18.975
-HOC_PHAN xác định năm học, học kỳ, lớp, khoa và giảng viên phụ trách.
+00:04:24.576 --> 00:04:28.032
+Cần xác định đúng phạm vi để tránh khẳng định quá mức.
 
 40
-00:04:18.975 --> 00:04:23.597
-THOI_KHOA_BIEU liên kết sinh viên với các học phần mà họ được phép xem.
+00:04:28.232 --> 00:04:37.192
+định lý số dư Trung Hoa là một định lý số học cho phép tìm một nghiệm duy nhất theo mô-đun là tích của các mô-đun đôi một nguyên tố cùng nhau.
 
 41
-00:04:23.597 --> 00:04:27.047
-SNT lưu năm triệu số nguyên tố, mỗi số có một chỉ số.
+00:04:37.392 --> 00:04:43.237
+Trong đồ án, tính chất đó được dùng để biểu diễn ba điểm đã chuẩn hóa bằng một số C.
 
 42
-00:04:27.047 --> 00:04:28.805
-DIEM_CRT là bảng trọng tâm.
+00:04:43.437 --> 00:04:52.184
+Tuy nhiên, định lý số dư Trung Hoa tự nó không cung cấp đầy đủ tính bí mật, xác thực và toàn vẹn như một hệ mật mã hiện đại.
 
 43
-00:04:28.805 --> 00:04:42.345
-Bảng này lưu MASV, MAHP, MAGV, giá trị C, năm học, học kỳ, mã khoa và mã lớp tại thời điểm mã hóa, public key sinh viên dùng trong ngữ cảnh CRT, phiên bản thuật toán, phiên bản khóa và thời gian tạo cập nhật.
+00:04:52.384 --> 00:04:58.699
+Nếu một người có cả C và đúng ba số nguyên tố, họ chỉ cần lấy phần dư để khôi phục điểm.
 
 44
-00:04:42.345 --> 00:04:49.767
-Hệ thống không lưu startIndex, endIndex hoặc ba số nguyên tố trong DIEM_CRT; các giá trị đó được tính lại khi cần.
+00:04:58.899 --> 00:05:11.037
+Vì vậy, cách trình bày chính xác là: hệ thống minh họa cơ chế không lưu trực tiếp điểm thật trong bảng điểm mã hóa theo định lý số dư Trung Hoa và dẫn xuất bộ mô-đun từ ngữ cảnh cùng thông
 
 45
-00:04:50.767 --> 00:04:53.539
-Toàn bộ hệ thống có thể hiểu bằng hai chiều.
+00:05:11.237 --> 00:05:13.840
+tin mã số cá nhân, khóa công khai.
 
 46
-00:04:53.539 --> 00:04:55.304
-Chiều thứ nhất là nhập điểm.
+00:05:14.040 --> 00:05:25.091
+Khi triển khai thực tế, vẫn cần lớp bảo mật đường truyền, quản lý bí mật, mã hóa chuẩn, kiểm soát truy cập, giám sát và bảo vệ giao diện lập trình ứng dụng.
 
 47
-00:04:55.304 --> 00:04:59.904
-Giảng viên chọn năm học, học kỳ và học phần, nhập PIN và chọn file Excel.
+00:05:25.791 --> 00:05:29.439
+Không nên dùng một từ bảo mật để gom tất cả yêu cầu.
 
 48
-00:04:59.904 --> 00:05:04.883
-Frontend đọc file, kiểm tra cấu trúc cơ bản rồi gửi danh sách điểm lên backend.
+00:05:29.639 --> 00:05:34.844
+Mục tiêu thứ nhất là tính bí mật: người không được phép không đọc được điểm.
 
 49
-00:05:04.883 --> 00:05:14.588
-Backend kiểm tra quyền, xác thực PIN, lấy ngữ cảnh sinh viên và học phần, chuẩn hóa điểm, tính prime range, lấy ba số nguyên tố, gọi Java mã hóa và lưu C.
+00:05:35.044 --> 00:05:43.599
+Mục tiêu thứ hai là tính toàn vẹn: hệ thống phải phát hiện nếu C, mã học phần hoặc dữ liệu mô tả bị sửa hoặc tráo.
 
 50
-00:05:14.588 --> 00:05:16.226
-Chiều thứ hai là xem điểm.
+00:05:43.799 --> 00:05:50.967
+Mục tiêu thứ ba là xác thực danh tính thông qua tài khoản, mật khẩu, mã số cá nhân và phiên đăng nhập.
 
 51
-00:05:16.226 --> 00:05:18.495
-Sinh viên chọn học phần và nhập PIN.
+00:05:51.167 --> 00:05:58.996
+Mục tiêu thứ tư là khả năng cung cấp chức năng khi một thành phần bị lỗi, đồng thời không để trạng thái dữ liệu nửa chừng.
 
 52
-00:05:18.495 --> 00:05:28.641
-Backend xác định sinh viên từ session, kiểm tra PIN, lấy C và mã giảng viên từ DIEM_CRT, tính lại đúng prime range, lấy lại ba số nguyên tố rồi gọi Java giải mã.
+00:05:59.196 --> 00:06:06.343
+định lý số dư Trung Hoa hiện tại chủ yếu thay cách biểu diễn dữ liệu trong bảng điểm định lý số dư Trung Hoa.
 
 53
-00:05:28.641 --> 00:05:33.619
-Java trả ba số nguyên đã chuẩn hóa; backend chia cho mười và frontend hiển thị.
+00:06:06.543 --> 00:06:08.761
+Nó không tự xác thực người dùng.
 
 54
-00:05:33.619 --> 00:05:40.867
-Hai chiều phải dùng cùng ngữ cảnh và tạo cùng shared secret, nếu không bộ prime sẽ khác và kết quả không chính xác.
+00:06:08.961 --> 00:06:15.511
+Nó cũng không tạo thẻ kiểm tra toàn vẹn giống mã xác thực thông điệp hoặc mã hóa kèm xác thực thẻ.
 
 55
-00:05:41.867 --> 00:05:46.550
-Ở góc nhìn người dùng, luồng nhập điểm được thiết kế gần với thói quen thực tế.
+00:06:15.711 --> 00:06:21.577
+Khi dịch vụ Java dừng, các luồng nhập, xem và đổi mã số cá nhân đều bị ảnh hưởng.
 
 56
-00:05:46.550 --> 00:05:51.412
-Giảng viên không nhập từng dòng thủ công mà chọn đúng học phần rồi tải file Excel.
+00:06:21.777 --> 00:06:25.276
+Vì vậy khi đánh giá, phải chấm từng thuộc tính riêng.
 
 57
-00:05:51.412 --> 00:05:54.910
-File mẫu có các cột định danh sinh viên và ba giá trị điểm.
+00:06:25.476 --> 00:06:32.580
+Hệ thống có phiên đăng nhập và lớp kiểm tra trung gian nên có một lớp tính xác thực và kiểm soát truy cập.
 
 58
-00:05:54.910 --> 00:05:58.882
-Trước khi lưu, giao diện hiển thị danh sách để người dùng kiểm tra.
+00:06:32.780 --> 00:06:39.308
+Nhưng với cơ sở dữ liệu bản sao dữ liệu, tính bí mật yếu vì có thể thử các vùng số nguyên tố.
 
 59
-00:05:58.882 --> 00:06:04.277
-Khi bấm lưu, frontend tạo payload gồm courseId, academicYear, semester, PIN và mảng grades.
+00:06:39.508 --> 00:06:42.303
+tính toàn vẹn yếu vì C không kèm thẻ.
 
 60
-00:06:04.277 --> 00:06:08.723
-Mỗi phần tử có mã sinh viên, điểm giữa kỳ, điểm cuối kỳ và điểm trung bình.
+00:06:42.503 --> 00:06:47.537
+khả năng sẵn sàng phụ thuộc đồng bộ vào Java và phiên đăng nhập trong bộ nhớ.
 
 61
-00:06:08.723 --> 00:06:14.830
-Sau đó frontend gửi POST đến endpoint admin nhập điểm với credentials include để cookie session đi kèm.
+00:06:47.737 --> 00:06:56.633
+Cách tách này giúp phần thuyết trình chính xác và tránh tuyên bố rằng dùng định lý số dư Trung Hoa đồng nghĩa đạt mọi mục tiêu bảo mật.
 
 62
-00:06:14.830 --> 00:06:22.300
-Video demo cho thấy giao diện có thể tải danh sách sinh viên theo học phần, nhận dữ liệu Excel và trả thông báo sau khi xử lý.
+00:06:57.333 --> 00:07:00.149
+Kiến trúc của hệ thống gồm bốn thành phần.
 
 63
-00:06:22.300 --> 00:06:31.667
-Tuy nhiên, điều quan trọng không phải chỉ là nút import hoạt động, mà là dữ liệu sau nút đó phải đi qua đầy đủ các kiểm tra và mã hóa trước khi chạm database.
+00:07:00.349 --> 00:07:06.813
+Thành phần giao diện người dùng cung cấp các màn hình cho quản trị viên, giảng viên và sinh viên.
 
 64
-00:06:32.667 --> 00:06:36.571
-Một chi tiết thường bị trình bày sai là ai thực sự đọc file Excel.
+00:07:07.013 --> 00:07:17.040
+giao diện phía trước cũng đọc tệp bảng tính bằng thư viện đọc bảng tính, chuyển dữ liệu thành danh sách dữ liệu có cấu trúc rồi gửi sang máy chủ phía sau.
 
 65
-00:06:36.571 --> 00:06:47.159
-Trình duyệt của người dùng có quyền truy cập file mà họ vừa chọn, nên frontend dùng thư viện xlsx để đọc workbook, lấy sheet, ánh xạ tên cột và tạo danh sách đối tượng JavaScript.
+00:07:17.240 --> 00:07:26.563
+Máy chủ ứng dụng là cổng tin cậy trung tâm: quản lý phiên đăng nhập, xác định vai trò, kiểm tra giảng viên có phụ trách học phần hay không,
 
 66
-00:06:47.159 --> 00:06:50.235
-Backend không mở đường dẫn file trên máy người dùng.
+00:07:26.763 --> 00:07:31.904
+truy vấn máy chủ cơ sở dữ liệu và điều phối các lời gọi đến dịch vụ Java.
 
 67
-00:06:50.235 --> 00:06:52.660
-Nó chỉ nhận JSON đã được frontend tạo ra.
+00:07:32.104 --> 00:07:40.808
+dịch vụ Java chỉ tập trung vào thuật toán: tạo khóa công khai mô phỏng, tính bí mật dùng chung, xác định vùng số nguyên tố,
 
 68
-00:06:52.660 --> 00:07:00.704
-Frontend có thể phát hiện sớm các lỗi như thiếu cột, thiếu mã sinh viên, ô điểm không phải số hoặc điểm nằm ngoài khoảng không đến mười.
+00:07:41.008 --> 00:07:47.045
+mã hóa định lý số dư Trung Hoa và giải mã định lý số dư Trung Hoa bằng kiểu số nguyên lớn.
 
 69
-00:07:00.704 --> 00:07:03.721
-Tuy vậy, kiểm tra frontend chỉ phục vụ trải nghiệm.
+00:07:47.245 --> 00:07:50.893
+Java không truy vấn trực tiếp máy chủ cơ sở dữ liệu.
 
 70
-00:07:03.721 --> 00:07:07.388
-Backend vẫn phải kiểm tra lại tất cả vì request có thể bị sửa.
+00:07:51.093 --> 00:08:02.016
+máy chủ phía sau nhận chỉ số bắt đầu và chỉ số kết thúc từ Java, lấy đúng ba số nguyên tố trong bảng số nguyên tố rồi gửi danh sách số dạng chuỗi trở lại Java.
 
 71
-00:07:07.388 --> 00:07:12.535
-Nguyên tắc quan trọng là: không tin dữ liệu từ client, kể cả khi giao diện đã kiểm tra.
+00:08:02.216 --> 00:08:12.136
+máy chủ cơ sở dữ liệu lưu dữ liệu quản lý đào tạo, tài khoản, giá trị băm của mã số cá nhân, khóa công khai, bảng năm triệu số nguyên tố,
 
 72
-00:07:12.535 --> 00:07:17.267
-Chính backend mới là nơi quyết định bản ghi nào hợp lệ để đi tiếp vào luồng CRT.
+00:08:12.336 --> 00:08:16.325
+nhật ký và bảng điểm mã hóa theo định lý số dư Trung Hoa.
 
 73
-00:07:18.267 --> 00:07:21.113
-Endpoint nhập điểm phải xử lý nhiều lớp kiểm tra.
+00:08:17.025 --> 00:08:20.460
+Kiến trúc chỉ rõ nơi dữ liệu đổi miền tin cậy.
 
 74
-00:07:21.113 --> 00:07:24.830
-Trước hết, request phải có session hợp lệ và vai trò giảng viên.
+00:08:20.660 --> 00:08:30.345
+Trình duyệt là môi trường do người dùng kiểm soát, vì vậy mọi dữ liệu có cấu trúc gửi từ giao diện phía trước đều phải được xem là không đáng tin.
 
 75
-00:07:24.830 --> 00:07:32.322
-Tiếp theo backend tìm học phần theo mã học phần, năm học và học kỳ, rồi đối chiếu mã giảng viên phụ trách với tài khoản hiện tại.
+00:08:30.545 --> 00:08:39.313
+máy chủ trung gian nhận giao thức truyền dữ liệu, phục vụ tệp thư viện giao diện và chuyển tiếp lời gọi giao diện lập trình ứng dụng.
 
 76
-00:07:32.322 --> 00:07:35.865
-Sau đó hệ thống xác thực PIN giảng viên bằng PIN hash đã lưu.
+00:08:39.513 --> 00:08:49.988
+môi trường máy chủ và khung máy chủ là điểm điều phối trung tâm: đọc phiên đăng nhập, kiểm tra vai trò, truy vấn hệ quản trị cơ sở dữ liệu và gọi Java.
 
 77
-00:07:35.865 --> 00:07:42.661
-Với từng sinh viên, backend kiểm tra mã sinh viên tồn tại, thuộc ngữ cảnh học phần, có mã lớp, mã khoa và public key.
+00:08:50.188 --> 00:08:53.559
+máy chủ cơ sở dữ liệu là vùng lưu trữ bền vững.
 
 78
-00:07:42.661 --> 00:07:45.565
-Ba điểm phải là số trong khoảng từ không đến mười.
+00:08:53.759 --> 00:09:01.204
+Java định lý số dư Trung Hoa dịch vụ là dịch vụ tính toán nội bộ, không nên được trình duyệt gọi trực tiếp.
 
 79
-00:07:45.565 --> 00:07:48.991
-Nếu thiếu bất kỳ dữ liệu nào, bản ghi đó không được mã hóa.
+00:09:01.404 --> 00:09:09.041
+Theo hệ thống đóng gói dịch vụ cấu hình dịch vụ, giao diện phía trước là dịch vụ được công bố ra máy chủ vật lý;
 
 80
-00:07:48.991 --> 00:07:59.446
-Backend còn kiểm tra Java service có trả prime range hợp lệ hay không, truy vấn SNT có lấy đủ đúng ba số nguyên tố hay không, và kết quả encrypt có chứa giá trị C hợp lệ hay không.
+00:09:09.241 --> 00:09:14.447
+Java và cơ sở dữ liệu chỉ mở cổng trong mạng hệ thống đóng gói dịch vụ.
 
 81
-00:07:59.446 --> 00:08:04.267
-Những bước này ngăn tình trạng lưu một bản ghi nửa vời mà sau đó không thể giải mã.
+00:09:14.647 --> 00:09:16.801
+Đây là một ưu điểm triển khai.
 
 82
-00:08:05.267 --> 00:08:10.645
-CRT và BigInteger làm việc trên số nguyên, trong khi điểm thường có một chữ số thập phân.
+00:09:17.001 --> 00:09:21.353
+Tuy nhiên mở cổng nội bộ không thay cho xác thực giữa các dịch vụ.
 
 83
-00:08:10.645 --> 00:08:14.633
-Vì vậy backend chuẩn hóa mỗi điểm bằng cách nhân mười và làm tròn.
+00:09:21.553 --> 00:09:31.623
+Nếu một khối dịch vụ khác trong cùng mạng nội bộ bị chiếm, địa chỉ xử lý Java vẫn cần mã xác thực dịch vụ hoặc xác thực hai chiều giữa các dịch vụ.
 
 84
-00:08:14.633 --> 00:08:17.111
-Điểm tám phẩy năm trở thành tám mươi lăm.
+00:09:31.823 --> 00:09:40.228
+Khi vẽ sơ đồ, hãy đặt mã số cá nhân, dữ liệu rõ điểm và tệp nhận dạng phiên đăng nhập tại đúng mũi tên mà chúng đi qua.
 
 85
-00:08:17.111 --> 00:08:18.803
-Điểm bảy trở thành bảy mươi.
+00:09:40.428 --> 00:09:46.913
+mã số cá nhân đi từ trình duyệt tới môi trường máy chủ và có thể xuất hiện trong phần thân yêu cầu.
 
 86
-00:08:18.803 --> 00:08:20.555
-Điểm mười trở thành một trăm.
+00:09:47.113 --> 00:09:52.937
+các số nguyên tố và dữ liệu rõ điểm đã chuẩn hóa đi giữa môi trường máy chủ và Java.
 
 87
-00:08:20.555 --> 00:08:24.120
-Khi giải mã, backend chia kết quả cho mười để hiển thị lại.
+00:09:53.137 --> 00:09:56.060
+C được ghi vào hệ quản trị cơ sở dữ liệu.
 
 88
-00:08:24.120 --> 00:08:28.290
-Cần lưu ý độ chính xác của thiết kế này chỉ giữ một chữ số thập phân.
+00:09:56.260 --> 00:10:04.665
+Nhìn theo đường đi này sẽ thấy ngay nhật ký ở môi trường máy chủ hoặc nội dung phản hồi lỗi ở Java có thể trở thành nguồn rò rỉ.
 
 89
-00:08:28.290 --> 00:08:36.508
-Ví dụ chín phẩy hai ba nhân mười bằng chín mươi hai phẩy ba; Math.round cho kết quả chín mươi hai, nên khi hiển thị sẽ là chín phẩy hai.
+00:10:05.365 --> 00:10:08.992
+Luồng khởi động cũng là một phần của quy tắc nghiệp vụ.
 
 90
-00:08:36.508 --> 00:08:40.859
-Đây không phải lỗi CRT mà là quyết định lượng tử hóa của bước chuẩn hóa.
+00:10:09.192 --> 00:10:14.589
+cơ sở dữ liệu phải chạy trước để tạo lược đồ dữ liệu và nạp bảng số nguyên tố.
 
 91
-00:08:40.859 --> 00:08:47.567
-Nếu muốn giữ hai chữ số thập phân, hệ thống phải nhân một trăm và chọn modulo lớn hơn giá trị tối đa một nghìn.
+00:10:14.789 --> 00:10:22.128
+Dịch vụ khởi tạo hệ quản trị cơ sở dữ liệu cần hoàn tất trước khi các thành phần khác dựa vào bảng số nguyên tố.
 
 92
-00:08:48.567 --> 00:08:50.399
-Bây giờ đến nền tảng toán học.
+00:10:22.328 --> 00:10:29.901
+dịch vụ Java cần sẵn sàng để nạp dữ liệu khởi tạo lịch sử có thể tính vùng số nguyên tố và mã hóa dữ liệu.
 
 93
-00:08:50.399 --> 00:08:56.263
-Giả sử p một, p hai và p ba là ba số nguyên tố khác nhau, nên chúng đôi một nguyên tố cùng nhau.
+00:10:30.101 --> 00:10:39.573
+tập lệnh tập lệnh nạp điểm lịch sử đã mã hóa chạy trước máy chủ phía sau; cấu hình phụ thuộc vào sử dụng điều kiện dịch vụ hoàn tất thành công.
 
 94
-00:08:56.263 --> 00:09:03.959
-Ta muốn tìm C sao cho phần dư của C khi chia p một là a một, phần dư khi chia p hai là a hai và phần dư khi chia p ba là a ba.
+00:10:39.773 --> 00:10:51.955
+Nếu bỏ bước này, cơ sở dữ liệu tổng có thể đã xóa hoặc chưa có dữ liệu bảng điểm định lý số dư Trung Hoa cho các năm trước, khiến giao diện sinh viên không xem được điểm lịch sử.
 
 95
-00:09:03.959 --> 00:09:12.083
-Định lý số dư Trung Hoa bảo đảm hệ đồng dư này có một nghiệm duy nhất trong khoảng từ không đến M trừ một, với M bằng tích ba modulo.
+00:10:52.155 --> 00:11:02.651
+tập lệnh nạp dữ liệu khởi tạo không lấy trực tiếp điểm từ bảng tập dữ liệu nghiên cứu mà dùng hàm sinh điểm xác định để tạo dữ liệu tổng hợp có tính xác định.
 
 96
-00:09:12.083 --> 00:09:16.541
-Trong hệ thống, a một, a hai và a ba chính là GK, CK và TB sau chuẩn hóa.
+00:11:02.851 --> 00:11:07.693
+Nó kiểm tra năm học và học kỳ, mã hóa từng bản ghi và đếm lỗi.
 
 97
-00:09:16.541 --> 00:09:19.351
-Nhờ vậy, một số C có thể đại diện cho ba điểm.
+00:11:07.893 --> 00:11:11.584
+Nếu có lỗi, tiến trình trả mã thoát mã nguồn khác không.
 
 98
-00:09:19.351 --> 00:09:26.436
-Khi biết đúng p một, p hai và p ba, ta không cần chạy lại toàn bộ công thức để giải mã; chỉ cần lấy C modulo từng p.
+00:11:11.784 --> 00:11:17.373
+Cách bắt buộc nạp dữ liệu khởi tạo thành công trước máy chủ phía sau là điểm tốt.
 
 99
-00:09:26.436 --> 00:09:32.483
-Điều kiện quan trọng là mỗi p phải lớn hơn giá trị điểm tối đa sau chuẩn hóa, tức lớn hơn một trăm.
+00:11:17.573 --> 00:11:23.568
+Nhưng nó cũng làm thời gian khởi động phụ thuộc vào một lô dữ liệu dài và dịch vụ Java.
 
 100
-00:09:33.483 --> 00:09:36.377
-Công thức xây dựng nghiệm được thực hiện như sau.
+00:11:23.768 --> 00:11:36.355
+Trong môi trường vận hành thực tế nên dùng chuyển đổi dữ liệu có phiên bản, điểm tiếp tục, khả năng chạy lặp lại an toàn và báo cáo trạng thái rõ ràng thay vì gắn toàn bộ khả năng mở giao
 
 101
-00:09:36.377 --> 00:09:39.094
-Đầu tiên tính M bằng tích của ba số nguyên tố.
+00:11:36.555 --> 00:11:40.971
+diện lập trình ứng dụng vào một tập lệnh nạp dữ liệu khởi tạo lớn.
 
 102
-00:09:39.094 --> 00:09:41.633
-Với mỗi vị trí i, tính M i bằng M chia p i.
+00:11:41.671 --> 00:11:43.527
+Hệ thống tách ba vai trò.
 
 103
-00:09:41.633 --> 00:09:44.763
-Sau đó tìm y i là nghịch đảo modulo của M i theo p i.
+00:11:43.727 --> 00:11:48.719
+quản trị viên có mã vai trò một và truy cập khu vực quản trị dữ liệu nền.
 
 104
-00:09:44.763 --> 00:09:48.366
-Cuối cùng cộng ba hạng a i nhân M i nhân y i và lấy modulo M.
+00:11:48.919 --> 00:11:56.151
+Giảng viên có mã vai trò hai và được phép nhập điểm, nhưng chỉ cho học phần gắn với mã giảng viên của chính họ.
 
 105
-00:09:48.366 --> 00:09:57.697
-Vì tích các số nguyên tố có thể vượt giới hạn số nguyên sáu mươi bốn bit, Java service dùng BigInteger cho toàn bộ phép nhân, chia, modulo và modular inverse.
+00:11:56.351 --> 00:12:06.484
+Sinh viên có mã vai trò không và xem thông tin, thời khóa biểu, lịch sử đăng nhập, lịch sử đổi mã số cá nhân và kết quả học tập của chính mình.
 
 106
-00:09:57.697 --> 00:10:06.024
-Trước khi tính, service kiểm tra số lượng điểm bằng số lượng prime, danh sách không rỗng, điểm không âm và mỗi điểm nhỏ hơn modulo tương ứng.
+00:12:06.684 --> 00:12:10.887
+Điểm quan trọng là kiểm tra quyền phải nằm ở máy chủ phía sau.
 
 107
-00:10:06.024 --> 00:10:13.583
-Nếu một điểm lớn hơn hoặc bằng prime, phép lấy dư sẽ không còn khôi phục được đúng giá trị ban đầu, nên request phải bị từ chối.
+00:12:11.087 --> 00:12:16.335
+giao diện phía trước có thể ẩn nút, nhưng người dùng vẫn có thể tự gửi yêu cầu.
 
 108
-00:10:14.583 --> 00:10:17.266
-Hãy đi qua một ví dụ nhỏ để thấy rõ ý nghĩa.
+00:12:16.535 --> 00:12:28.289
+Vì vậy địa chỉ xử lý nhập điểm phải xác thực phiên đăng nhập, xác nhận vai trò giảng viên, đối chiếu mã giảng viên với học phần và từ chối quản trị viên hoặc người không phụ trách.
 
 109
-00:10:17.266 --> 00:10:22.328
-Một sinh viên có điểm giữa kỳ tám phẩy năm, cuối kỳ bảy và trung bình bảy phẩy tám.
+00:12:28.489 --> 00:12:38.260
+Tương tự, địa chỉ xử lý xem điểm nên lấy mã sinh viên từ phiên đăng nhập, không tin một mã số sinh viên tùy ý do giao diện phía trước gửi lên.
 
 110
-00:10:22.328 --> 00:10:25.987
-Sau chuẩn hóa, ta có tám mươi lăm, bảy mươi và bảy mươi tám.
+00:12:38.460 --> 00:12:43.495
+Đây là ranh giới giữa giao diện thuận tiện và kiểm soát bảo mật thực sự.
 
 111
-00:10:25.987 --> 00:10:31.048
-Để dễ tính, giả sử ba modulo là một trăm lẻ một, một trăm lẻ ba và một trăm lẻ bảy.
+00:12:44.195 --> 00:12:49.464
+Luồng đăng nhập bắt đầu tại yêu cầu gửi dấu gạch chéo đăng nhập trong máy chủ chính.
 
 112
-00:10:31.048 --> 00:10:36.353
-Đây chỉ là ví dụ minh họa; hệ thống thật lấy các prime ở vị trí rất lớn trong bảng SNT.
+00:12:49.664 --> 00:12:58.411
+máy chủ phía sau nhận thông tin tài khoản, gọi thủ tục lưu sẵn thủ tục kiểm tra đăng nhập và đọc vai trò cùng định danh liên quan.
 
 113
-00:10:36.353 --> 00:10:45.256
-Bài toán trở thành tìm C sao cho C chia một trăm lẻ một dư tám mươi lăm, chia một trăm lẻ ba dư bảy mươi, và chia một trăm lẻ bảy dư bảy mươi tám.
+00:12:58.611 --> 00:13:04.669
+Với giảng viên, mã định danh liên quan là mã giảng viên; với sinh viên là mã sinh viên.
 
 114
-00:10:45.256 --> 00:10:50.683
-Áp dụng công thức CRT thu được một nghiệm là một trăm mười nghìn không trăm bảy mươi bốn.
+00:13:04.869 --> 00:13:11.696
+Những giá trị này được đưa vào phiên đăng nhập và được lớp kiểm tra trung gian dùng cho các yêu cầu sau.
 
 115
-00:10:51.683 --> 00:10:51.881
-Bây giờ kiểm tra ngược.
+00:13:11.896 --> 00:13:16.952
+Điểm quan trọng là quyền không nên suy ra từ trình đơn giao diện phía trước.
 
 116
-00:10:51.881 --> 00:10:52.610
-Một trăm mười nghìn không trăm bảy mươi bốn modulo một trăm lẻ một bằng tám mươi lăm.
+00:13:17.152 --> 00:13:21.184
+Chính phiên đăng nhập máy chủ phía sau mới là nguồn quyết định.
 
 117
-00:10:52.610 --> 00:10:52.919
-Modulo một trăm lẻ ba bằng bảy mươi.
+00:13:21.384 --> 00:13:27.101
+mã nguồn hiện chưa cho thấy gọi yêu cầu phiên đăng nhập tạo lại sau khi đăng nhập thành công.
 
 118
-00:10:52.919 --> 00:10:53.271
-Modulo một trăm lẻ bảy bằng bảy mươi tám.
+00:13:27.301 --> 00:13:37.029
+Điều đó để lại rủi ro chiếm giữ mã phiên đăng nhập: một phiên đăng nhập mã định danh tồn tại trước đăng nhập có thể tiếp tục được dùng sau đăng nhập.
 
 119
-00:10:53.271 --> 00:10:53.906
-Chia cả ba kết quả cho mười, ta trở lại tám phẩy năm, bảy và bảy phẩy tám.
+00:13:37.229 --> 00:13:48.237
+kho lưu phiên đăng nhập mặc định nằm trong bộ nhớ tiến trình môi trường máy chủ, vì vậy khởi động lại làm mất phiên và nhiều bản chạy song song không tự chia sẻ trạng thái.
 
 120
-00:10:53.906 --> 00:10:54.429
-Database có thể lưu C thay cho ba cột điểm trong bảng mã hóa.
+00:13:48.437 --> 00:13:55.883
+Cấu hình cấu hình dịch vụ còn có bí mật bảo vệ phiên đăng nhập mẫu nếu người triển khai không thay biến môi trường.
 
 121
-00:10:54.429 --> 00:10:54.892
-Nhưng cần nhắc lại: C không phải một bí mật tuyệt đối.
+00:13:56.083 --> 00:14:07.944
+Cách cải thiện là bắt buộc bí mật mạnh, tạo lại phiên đăng nhập khi đăng nhập, lưu phiên đăng nhập trong kho lưu phiên dùng chung hoặc hệ quản trị cơ sở dữ liệu, cấu hình thời hạn,
 
 122
-00:10:54.892 --> 00:10:55.304
-Nếu bộ prime bị lộ, khôi phục điểm là trực tiếp.
+00:14:08.144 --> 00:14:12.624
+thay khóa định kỳ tệp nhận dạng phiên và theo dõi đăng nhập bất thường.
 
 123
-00:10:55.304 --> 00:10:56.600
-Vì vậy thiết kế dùng ngữ cảnh và shared secret để xác định vị trí prime, đồng thời phải bảo vệ backend, public key, PIN, session và quyền đọc bảng SNT.
+00:14:12.824 --> 00:14:23.021
+Khi thuyết trình, có thể nói mã nguồn đã có tính xác thực và vai trò ánh xạ thật, nhưng phiên đăng nhập gia cố bảo mật chưa đạt chuẩn môi trường vận hành thực tế.
 
 124
-00:10:57.600 --> 00:11:01.239
-Hệ thống không dùng một bộ prime cố định cho tất cả sinh viên.
+00:14:23.721 --> 00:14:32.511
+mã nguồn có lớp kiểm tra trung gian kiểm tra phiên đăng nhập và các hàm yêu cầu vai trò sinh viên, giảng viên hoặc quản trị viên.
 
 125
-00:11:01.239 --> 00:11:06.814
-Để hai phía có thể tái lập cùng vùng prime, Java service mô phỏng trao đổi khóa Diffie–Hellman.
+00:14:32.711 --> 00:14:40.860
+địa chỉ xử lý nhập điểm còn truy vấn học phần và so mã giảng viên phụ trách với mã định danh liên quan trong phiên đăng nhập.
 
 126
-00:11:06.814 --> 00:11:13.093
-Mỗi người có PIN đóng vai trò số mũ bí mật và public key bằng g lũy thừa PIN modulo một số nguyên tố lớn P.
+00:14:41.060 --> 00:14:49.529
+Đây là kiểm soát ở mức từng đối tượng dữ liệu đúng hướng: giảng viên không chỉ cần đúng vai trò, mà còn phải sở hữu học phần.
 
 127
-00:11:13.093 --> 00:11:17.612
-Khi mã hóa, giảng viên dùng public key của sinh viên lũy thừa PIN giảng viên.
+00:14:49.729 --> 00:14:54.081
+Tuy nhiên địa chỉ xử lý xem điểm lại có một chi tiết nguy hiểm.
 
 128
-00:11:17.612 --> 00:11:22.131
-Khi giải mã, sinh viên dùng public key của giảng viên lũy thừa PIN sinh viên.
+00:14:54.281 --> 00:15:00.511
+Nó ưu tiên mã số sinh viên trong phần thân yêu cầu trước mã số sinh viên lấy từ phiên đăng nhập.
 
 129
-00:11:22.131 --> 00:11:29.232
-Do tính chất lũy thừa modulo, hai kết quả đều tương ứng với g lũy thừa tích hai PIN modulo P, nên tạo cùng shared secret.
+00:15:00.711 --> 00:15:07.452
+giao diện phía trước bình thường không gửi trường này, nên bài giảng phần trình diễn sẽ không bộc lộ lỗi.
 
 130
-00:11:29.232 --> 00:11:34.573
-Đây là lý do hai luồng dùng cặp đầu vào khác nhau nhưng vẫn dẫn xuất được cùng prime range.
+00:15:07.652 --> 00:15:12.345
+Nhưng người dùng có thể tự tạo yêu cầu và truyền mã số sinh viên khác.
 
 131
-00:11:34.573 --> 00:11:43.200
-Trong báo cáo và khi thuyết trình, cần gọi đây là cơ chế mô phỏng phục vụ đồ án, không tuyên bố đây là hệ thống quản lý khóa production hoàn chỉnh.
+00:15:12.545 --> 00:15:20.012
+Nếu biết hoặc đoán được mã số cá nhân của sinh viên mục tiêu, họ có khả năng yêu cầu đọc điểm người khác.
 
 132
-00:11:44.200 --> 00:11:52.314
-Sau khi có shared secret, Java ghép nó với ngữ cảnh của bản ghi: mã khoa, mã lớp, mã sinh viên, mã học phần và chuỗi phiên bản CRT_V1.
+00:15:20.212 --> 00:15:27.572
+Đây là dạng bị lỗi ở mức từng đối tượng dữ liệu phân quyền, thường được gọi gần với lỗi truy cập sai đối tượng.
 
 133
-00:11:52.314 --> 00:11:56.916
-Chuỗi kết quả được băm bằng SHA-256 rồi diễn giải thành một số nguyên lớn B.
+00:15:27.772 --> 00:15:39.335
+Cách sửa là đối với vai trò sinh viên, luôn lấy mã số sinh viên từ xác thực mã định danh liên quan; nếu phần thân yêu cầu chứa mã số sinh viên thì từ chối hoặc bỏ qua.
 
 134
-00:11:56.916 --> 00:12:03.395
-Việc đưa ngữ cảnh vào hàm băm giúp cùng một cặp người dùng nhưng khác học phần có thể nhận vùng prime khác.
+00:15:39.535 --> 00:15:47.684
+Chỉ quản trị viên có trường hợp sử dụng rõ ràng mới được chọn sinh viên khác, và phải có địa chỉ xử lý riêng với kiểm toán.
 
 135
-00:12:03.395 --> 00:12:09.148
-Mã phiên bản giúp hệ thống có khả năng phân biệt thuật toán nếu sau này thay đổi cách dẫn xuất.
+00:15:47.884 --> 00:15:52.855
+Bài học là lớp kiểm tra trung gian vai trò chỉ trả lời ai thuộc nhóm nào.
 
 136
-00:12:09.148 --> 00:12:21.319
-Khi mã hóa lại sau đổi PIN, hệ thống phải dùng đúng ngữ cảnh đã lưu tại thời điểm mã hóa, không chỉ đọc dữ liệu quản lý hiện tại, vì sinh viên có thể chuyển lớp hoặc thông tin học phần có thể thay đổi.
+00:15:53.055 --> 00:15:58.537
+Mỗi địa chỉ xử lý vẫn phải trả lời người đó được thao tác trên bản ghi cụ thể nào.
 
 137
-00:12:21.319 --> 00:12:25.800
-Đó là lý do DIEM_CRT lưu MAKHOA_CRT, MALOP_CRT và một số trường phiên bản.
+00:15:59.237 --> 00:16:04.144
+Để mã hóa và giải mã đúng, máy chủ phía sau phải kết hợp nhiều bảng.
 
 138
-00:12:26.800 --> 00:12:30.641
-Bảng SNT trong dữ liệu thử nghiệm chứa năm triệu số nguyên tố.
+00:16:04.344 --> 00:16:09.507
+bảng sinh viên cung cấp mã sinh viên, mã lớp và khóa công khai sinh viên.
 
 139
-00:12:30.641 --> 00:12:34.667
-Java không trả trực tiếp prime mà trả chỉ số bắt đầu và kết thúc.
+00:16:09.707 --> 00:16:12.011
+Từ lớp, hệ thống xác định khoa.
 
 140
-00:12:34.667 --> 00:12:40.738
-Đầu tiên tính safeRange bằng N trừ giá trị điểm tối đa sau chuẩn hóa, trừ số lượng điểm, cộng một.
+00:16:12.211 --> 00:16:18.909
+bảng giảng viên cung cấp mã giảng viên, giá trị băm của mã số cá nhân và khóa công khai giảng viên.
 
 141
-00:12:40.738 --> 00:12:49.163
-Với N bằng năm triệu, MAX_SCORE_X10 bằng một trăm và NUMBER_OF_GRADES bằng ba, khoảng an toàn giúp startIndex không chạy vượt cuối bảng.
+00:16:19.109 --> 00:16:24.741
+bảng học phần xác định năm học, học kỳ, lớp, khoa và giảng viên phụ trách.
 
 142
-00:12:49.163 --> 00:12:51.207
-Sau đó K bằng B modulo safeRange.
+00:16:24.941 --> 00:16:30.019
+bảng thời khóa biểu liên kết sinh viên với các học phần mà họ được phép xem.
 
 143
-00:12:51.207 --> 00:12:55.544
-StartIndex bằng K cộng một trăm, và endIndex bằng startIndex cộng hai.
+00:16:30.219 --> 00:16:35.189
+dữ liệu số nguyên tố lưu năm triệu số nguyên tố, mỗi số có một chỉ số.
 
 144
-00:12:55.544 --> 00:12:58.331
-Backend truy vấn ba dòng liên tiếp trong SNT.
+00:16:35.389 --> 00:16:38.973
+bảng điểm định lý số dư Trung Hoa là bảng trọng tâm.
 
 145
-00:12:58.331 --> 00:13:04.774
-Việc cộng một trăm đẩy chỉ số qua vùng đầu; do dãy prime tăng dần, các prime lấy được lớn hơn miền điểm.
+00:16:39.173 --> 00:16:53.381
+Bảng này lưu mã sinh viên, mã học phần, mã giảng viên, giá trị C, năm học, học kỳ, mã khoa và mã lớp tại thời điểm mã hóa, khóa công khai sinh viên dùng trong ngữ cảnh định lý số dư Trung Hoa,
 
 146
-00:13:04.774 --> 00:13:11.217
-Hệ thống phải xác nhận truy vấn trả đúng ba số và mỗi số đều là chuỗi số hợp lệ trước khi gửi sang Java.
+00:16:53.581 --> 00:16:58.061
+phiên bản thuật toán, phiên bản khóa và thời gian tạo cập nhật.
 
 147
-00:13:12.217 --> 00:13:15.381
-GradeCrtController công bố bốn endpoint nội bộ.
+00:16:58.261 --> 00:17:08.395
+Hệ thống không lưu chỉ số bắt đầu, chỉ số kết thúc hoặc ba số nguyên tố trong bảng điểm định lý số dư Trung Hoa; các giá trị đó được tính lại khi cần.
 
 148
-00:13:15.381 --> 00:13:18.545
-Public-key nhận PIN và trả public key mô phỏng.
+00:17:09.095 --> 00:17:11.484
+Mô hình đào tạo có chiều thời gian.
 
 149
-00:13:18.545 --> 00:13:26.690
-Prime-range nhận mã khoa, mã lớp, MSSV, mã học phần, PIN và public key của phía đối diện, rồi trả startIndex và endIndex.
+00:17:11.684 --> 00:17:15.993
+Một mã học phần có thể xuất hiện ở nhiều học kỳ và năm học.
 
 150
-00:13:26.690 --> 00:13:32.345
-Encrypt nhận danh sách điểm chuẩn hóa cùng danh sách prime và trả C dưới dạng chuỗi.
+00:17:16.193 --> 00:17:20.993
+Bảng học phần dùng bộ khóa gồm mã học phần, học kỳ và năm học.
 
 151
-00:13:32.345 --> 00:13:36.990
-Decrypt nhận C và danh sách prime rồi trả plaintext gồm ba số nguyên.
+00:17:21.193 --> 00:17:24.351
+bảng thời khóa biểu cũng có khóa ngoại tương ứng.
 
 152
-00:13:36.990 --> 00:13:43.588
-GradeCrtService thực hiện Diffie–Hellman mô phỏng, SHA-256, CRT bằng BigInteger và kiểm tra input.
+00:17:24.551 --> 00:17:31.185
+Nhưng khóa chính bảng điểm định lý số dư Trung Hoa được tạo với hai cột mã sinh viên và mã học phần.
 
 153
-00:13:43.588 --> 00:13:47.492
-Java không biết mật khẩu SQL Server và không truy vấn SNT.
+00:17:31.385 --> 00:17:36.740
+Các cột năm học, học kỳ được bổ sung sau đó nhưng không tham gia khóa chính.
 
 154
-00:13:47.492 --> 00:13:50.521
-Node mới là thành phần lấy prime từ database.
+00:17:36.940 --> 00:17:44.727
+Hậu quả là cùng một sinh viên học lại cùng mã môn ở năm khác không thể có hai bản ghi độc lập theo mô hình hiện tại.
 
 155
-00:13:50.521 --> 00:13:59.542
-Cách tách này tạo ranh giới rõ: Java là dịch vụ tính toán, còn backend chịu trách nhiệm xác thực, nghiệp vụ và quyền truy cập dữ liệu.
+00:17:44.927 --> 00:17:49.641
+thêm mới hoặc cập nhật có thể cập nhật đè C và dữ liệu mô tả cũ.
 
 156
-00:13:59.542 --> 00:14:07.217
-Trong triển khai thực tế, các endpoint nội bộ cũng cần mạng riêng, xác thực giữa service, timeout và health check.
+00:17:49.841 --> 00:17:57.351
+Đây không chỉ là vấn đề thiết kế cơ sở dữ liệu; nó ảnh hưởng khả năng giải mã, kiểm toán và lịch sử học tập.
 
 157
-00:14:08.217 --> 00:14:15.079
-Với mỗi dòng hợp lệ trong danh sách Excel, backend lấy thông tin sinh viên, lớp, khoa, học phần và giảng viên.
+00:17:57.551 --> 00:18:08.687
+Cách sửa tối thiểu là duy nhất hoặc khóa chính trên mã sinh viên, mã học phần, năm học và học kỳ, đồng thời tạo khóa ngoại tới đúng phiên bản bảng học phần.
 
 158
-00:14:15.079 --> 00:14:17.825
-Ba điểm được chuẩn hóa thành mảng số nguyên.
+00:18:08.887 --> 00:18:14.988
+Tốt hơn nữa là dùng một điểm lần học mã định danh bất biến để biểu diễn mỗi lần học.
 
 159
-00:14:17.825 --> 00:14:22.067
-Backend gọi prime-range bằng PIN giảng viên và public key sinh viên.
+00:18:15.188 --> 00:18:26.793
+Khi đổi lược đồ dữ liệu, cần chuyển đổi dữ liệu hiện có và cập nhật mọi câu truy vấn, thêm mới hoặc cập nhật, nạp dữ liệu khởi tạo và địa chỉ xử lý xem điểm.
 
 160
-00:14:22.067 --> 00:14:27.994
-Sau khi nhận chỉ số, backend truy vấn SNT và gửi ba prime cùng mảng điểm sang endpoint encrypt.
+00:18:26.993 --> 00:18:34.801
+Khi trình bày bảng điểm mã hóa theo định lý số dư Trung Hoa, phải nêu cả ưu điểm lưu C và hạn chế khóa thời gian này.
 
 161
-00:14:27.994 --> 00:14:29.678
-Java trả C dưới dạng chuỗi.
+00:18:35.501 --> 00:18:39.064
+bảng điểm định lý số dư Trung Hoa là bảng trung tâm.
 
 162
-00:14:29.678 --> 00:14:35.418
-Backend lưu hoặc cập nhật bản ghi theo cặp MASV và MAHP, đồng thời lưu MAGV và ngữ cảnh CRT.
+00:18:39.264 --> 00:18:44.597
+C được lưu dạng chuỗi lớn để không bị tràn kiểu số hệ quản trị cơ sở dữ liệu.
 
 163
-00:14:35.418 --> 00:14:37.664
-Điểm rõ không được ghi vào DIEM_CRT.
+00:18:44.797 --> 00:18:57.299
+Bảng còn giữ mã sinh viên, mã học phần, mã giảng viên, năm học, học kỳ, bản chụp ngữ cảnh khoa và lớp, khóa công khai sinh viên dùng trong ngữ cảnh, phiên bản thuật toán,
 
 164
-00:14:37.664 --> 00:14:44.028
-Tuy nhiên trong quá trình xử lý, plaintext vẫn tồn tại tạm thời ở frontend, request và bộ nhớ backend.
+00:18:57.499 --> 00:19:00.123
+khóa phiên bản và thời gian cập nhật.
 
 165
-00:14:44.028 --> 00:14:48.457
-Vì vậy không được ghi toàn bộ request body, PIN hoặc mảng điểm vào log.
+00:19:00.323 --> 00:19:06.701
+bản chụp ngữ cảnh có ích khi dữ liệu danh mục thay đổi nhưng bản ghi cũ vẫn cần tái lập ngữ cảnh.
 
 166
-00:14:48.457 --> 00:14:57.317
-Khi trình bày, câu đúng là không lưu trực tiếp điểm thật trong bảng DIEM_CRT, chứ không phải điểm thật không bao giờ xuất hiện trong hệ thống.
+00:19:06.901 --> 00:19:14.688
+bắt đầu chỉ số, kết thúc chỉ số và ba số nguyên tố không được lưu trực tiếp; máy chủ phía sau tính lại khi cần.
 
 167
-00:14:58.317 --> 00:15:00.819
-Khi demo, đây là màn hình cần phóng to.
+00:19:14.888 --> 00:19:25.427
+Tuy nhiên bảng cũng thiếu một thành phần quan trọng nếu gọi đây là mã hóa an toàn: không có giá trị chỉ dùng một lần, thẻ xác thực hoặc mã xác thực thông điệp.
 
 168
-00:15:00.819 --> 00:15:03.898
-Truy vấn DIEM_CRT theo đúng MSSV và mã học phần.
+00:19:25.627 --> 00:19:32.624
+Vì vậy cơ sở dữ liệu không thể tự phát hiện C bị sửa, tráo giữa hai bản ghi hoặc hoàn tác về bản cũ.
 
 169
-00:15:03.898 --> 00:15:09.223
-Người xem phải thấy MASV, MAHP, MAGV, C, các trường ngữ cảnh và thời gian cập nhật.
+00:19:32.824 --> 00:19:37.453
+khóa phiên bản chỉ là dữ liệu mô tả, không chứng minh tính toàn vẹn.
 
 170
-00:15:09.223 --> 00:15:14.612
-C được lưu dưới dạng NVARCHAR MAX vì kết quả BigInteger có thể vượt giới hạn BIGINT.
+00:19:37.653 --> 00:19:50.347
+Với thiết kế môi trường vận hành thực tế dùng thuật toán mã hóa có xác thực hiện đại, mỗi bản ghi cần bản mã, giá trị chỉ dùng một lần, thẻ, phiên bản thuật toán và mã định danh khóa;
 
 171
-00:15:14.612 --> 00:15:17.564
-Bảng trọng tâm không chứa ba cột GK, CK và TB.
+00:19:50.547 --> 00:19:57.971
+dữ liệu liên kết nên chứa mã sinh viên, mã học phần, năm, học kỳ và phiên bản để ngăn tráo ngữ cảnh.
 
 172
-00:15:17.564 --> 00:15:25.712
-StartIndex, endIndex và danh sách prime cũng không được lưu; chúng được tính lại trong bộ nhớ khi mã hóa, giải mã hoặc đổi PIN.
+00:19:58.171 --> 00:20:06.853
+định lý số dư Trung Hoa vẫn có thể được giữ như nội dung minh họa riêng, nhưng không nên là lớp bảo vệ duy nhất cho điểm khi lưu trữ.
 
 173
-00:15:25.712 --> 00:15:36.041
-Nếu muốn chứng minh mạnh hơn, hãy ghi lại C trước khi đổi PIN, thực hiện đổi PIN, rồi truy vấn lại để cho thấy C mới khác C cũ nhưng điểm giải mã vẫn giữ nguyên.
+00:20:07.553 --> 00:20:12.289
+bảng số nguyên tố chứa năm triệu số nguyên tố và chỉ số của từng số.
 
 174
-00:15:36.041 --> 00:15:40.917
-Đây là bằng chứng trực quan tốt hơn nhiều so với chỉ nói thuật toán đã chạy.
+00:20:12.489 --> 00:20:16.841
+Java không trả trực tiếp ba số nguyên tố; nó trả vùng chỉ số.
 
 175
-00:15:41.917 --> 00:15:45.597
-Khi sinh viên xem điểm, frontend gửi mã học phần và PIN.
+00:20:17.041 --> 00:20:22.823
+máy chủ phía sau dùng bắt đầu chỉ số và kết thúc chỉ số để lấy ba dòng liên tiếp.
 
 176
-00:15:45.597 --> 00:15:51.445
-Backend phải lấy MSSV từ session hiện tại để tránh người dùng tự thay MSSV trong request.
+00:20:23.023 --> 00:20:29.145
+Cách này đơn giản, tái lập được và giúp Java không phụ thuộc hệ quản trị cơ sở dữ liệu.
 
 177
-00:15:51.445 --> 00:15:56.308
-Sau khi xác thực PIN hash, backend tìm bản ghi DIEM_CRT theo MSSV và MAHP.
+00:20:29.345 --> 00:20:32.759
+Nhưng về bảo mật, không gian tìm kiếm không lớn.
 
 178
-00:15:56.308 --> 00:16:01.171
-Nếu có, backend lấy C và MAGV, rồi lấy public key hiện tại của giảng viên.
+00:20:32.959 --> 00:20:43.519
+Khi biết mã nguồn, một người có cơ sở dữ liệu bản sao dữ liệu có cả C, bảng số nguyên tố và quy tắc rằng mỗi phần dư hợp lệ nằm từ không đến một trăm.
 
 179
-00:16:01.171 --> 00:16:05.771
-Java prime-range được gọi bằng PIN sinh viên và public key giảng viên.
+00:20:43.719 --> 00:20:50.673
+Họ có thể thử từng bộ ba liên tiếp và kiểm tra C mô-đun từng số nguyên tố có rơi vào miền điểm hay không.
 
 180
-00:16:05.771 --> 00:16:14.248
-Nhờ tính chất Diffie–Hellman mô phỏng, shared secret trùng với lúc giảng viên mã hóa bằng PIN giảng viên và public key sinh viên.
+00:20:50.873 --> 00:20:55.588
+Hệ thống không cần lưu bắt đầu chỉ số thì cuộc dò vẫn thực hiện được.
 
 181
-00:16:14.248 --> 00:16:23.580
-Backend lấy đúng ba prime, gọi decrypt, kiểm tra plaintext có đủ ba số trong miền không đến một trăm, chia mười và trả GK, CK, TB về frontend.
+00:20:55.788 --> 00:20:59.500
+Vì vậy không nên gọi bảng số nguyên tố là một bí mật.
 
 182
-00:16:23.580 --> 00:16:27.917
-Người dùng chỉ thấy thao tác quen thuộc; toàn bộ CRT nằm phía sau.
+00:20:59.700 --> 00:21:01.620
+Nó là dữ liệu thuật toán.
 
 183
-00:16:28.917 --> 00:16:31.619
-Luồng giải mã cần phân biệt rõ các trường hợp.
+00:21:01.820 --> 00:21:10.865
+Nếu tiếp tục dùng vùng số nguyên tố cho mục đích nghiên cứu, nên phép đo hiệu năng thời gian thử toàn bộ và báo cáo kết quả khớp giả.
 
 184
-00:16:31.619 --> 00:16:35.554
-Nếu sinh viên nhập sai PIN, hệ thống dừng và trả thông báo sai PIN.
+00:21:11.065 --> 00:21:23.993
+Nếu mục tiêu là tính bí mật thực tế, phải dùng khóa mật mã có độ ngẫu nhiên đủ lớn và hàm dẫn xuất khóa chuẩn, không dựa vào việc người tấn công không biết vị trí trong bảng năm triệu dòng.
 
 185
-00:16:35.554 --> 00:16:42.897
-Nếu PIN đúng nhưng DIEM_CRT chưa có bản ghi, thông báo nên là chưa có điểm cho môn học này, không phải lỗi kỹ thuật khó hiểu.
+00:21:24.693 --> 00:21:33.760
+Trong tệp hệ quản trị cơ sở dữ liệu còn có bảng dữ liệu điểm gốc với các cột điểm giữa kỳ, điểm cuối kỳ và điểm trung bình dạng rõ.
 
 186
-00:16:42.897 --> 00:16:51.885
-Nếu thiếu public key giảng viên, không lấy đủ ba prime hoặc Java trả plaintext sai kích thước, backend phải từ chối và không hiển thị giá trị ngẫu nhiên.
+00:21:33.960 --> 00:21:46.248
+Trong khi đó tập lệnh nạp dữ liệu khởi tạo lịch sử ghi chú rằng không lưu các điểm đó dạng rõ, nhưng phần cài đặt thực tế dùng hàm sinh điểm xác định để sinh điểm tổng hợp chứ không đọc
 
 187
-00:16:51.885 --> 00:17:01.753
-Thông báo gửi cho người dùng cần ngắn gọn, trong khi log máy chủ có thể ghi mã lỗi và request ID nhưng không ghi PIN, C kèm toàn bộ ngữ cảnh bí mật hoặc plaintext điểm.
+00:21:46.448 --> 00:21:49.008
+trực tiếp bảng tập dữ liệu nghiên cứu.
 
 188
-00:17:01.753 --> 00:17:07.686
-Ngoài ra nên giới hạn số lần thử PIN, khóa tạm thời sau nhiều lần sai và ghi nhận sự kiện bất thường.
+00:21:49.208 --> 00:21:51.917
+Hai chi tiết này cần được nói chính xác.
 
 189
-00:17:07.686 --> 00:17:10.917
-Đây là các lớp bảo vệ bổ sung mà CRT không tự cung cấp.
+00:21:52.117 --> 00:21:57.963
+Có thể khẳng định bảng điểm mã hóa theo định lý số dư Trung Hoa không lưu ba cột điểm rõ.
 
 190
-00:17:11.917 --> 00:17:17.206
-PIN tham gia vào shared secret và prime range, vì vậy đổi PIN làm thay đổi bộ prime.
+00:21:58.163 --> 00:22:10.259
+Không nên khẳng định toàn bộ cơ sở dữ liệu không chứa điểm rõ nếu bảng dữ liệu gốc vẫn tồn tại trong lược đồ dữ liệu môi trường vận hành thực tế hoặc trong bản sao dữ liệu bàn giao.
 
 191
-00:17:17.206 --> 00:17:24.574
-Nếu hệ thống chỉ cập nhật PIN hash, các bản ghi C cũ vẫn gắn với prime cũ và người dùng sẽ không khôi phục đúng điểm.
+00:22:10.459 --> 00:22:18.693
+tập dữ liệu nghiên cứu nên tách sang cơ sở dữ liệu hoặc môi trường khác, giới hạn quyền và loại khỏi bản dựng triển khai.
 
 192
-00:17:24.574 --> 00:17:26.652
-Quy trình đúng gồm bốn giai đoạn.
+00:22:18.893 --> 00:22:25.955
+Nếu cần giữ để phép đo hiệu năng, phải ghi rõ đó là dữ liệu mô phỏng và không phải hồ sơ sinh viên thật.
 
 193
-00:17:26.652 --> 00:17:30.997
-Một, xác thực PIN hiện tại và lấy toàn bộ bản ghi DIEM_CRT liên quan.
+00:22:26.155 --> 00:22:36.352
+Khi hội đồng hỏi cơ sở dữ liệu có lưu dữ liệu rõ hay không, câu trả lời trung thực là: luồng điểm chính lưu C trong bảng điểm định lý số dư Trung Hoa,
 
 194
-00:17:30.997 --> 00:17:35.909
-Hai, với từng bản ghi, tái lập range cũ và giải mã C cũ thành ba số chuẩn hóa.
+00:22:36.552 --> 00:22:43.656
+nhưng tệp hệ quản trị cơ sở dữ liệu hiện còn bảng dữ liệu gốc cần loại khỏi bản môi trường vận hành thực tế.
 
 195
-00:17:35.909 --> 00:17:40.380
-Ba, tạo public key mới, tính range mới và mã hóa plaintext thành C mới.
+00:22:43.856 --> 00:22:49.232
+Cách trả lời này vừa bảo vệ tính chính xác khoa học vừa chỉ ra hướng sửa rõ ràng.
 
 196
-00:17:40.380 --> 00:17:45.859
-Bốn, giải mã thử C mới bằng prime mới và so sánh chính xác với plaintext trước khi ghi.
+00:22:49.932 --> 00:22:52.876
+Toàn bộ hệ thống có thể hiểu bằng hai chiều.
 
 197
-00:17:45.859 --> 00:17:49.637
-Khi sinh viên đổi PIN, mọi bản ghi của sinh viên được xử lý.
+00:22:53.076 --> 00:22:54.996
+Chiều thứ nhất là nhập điểm.
 
 198
-00:17:49.637 --> 00:17:54.297
-Khi giảng viên đổi PIN, mọi bản ghi do giảng viên đó phụ trách được xử lý.
+00:22:55.196 --> 00:23:01.724
+Giảng viên chọn năm học, học kỳ và học phần, nhập mã số cá nhân và chọn tệp bảng tính.
 
 199
-00:17:54.297 --> 00:17:58.517
-Video demo nên chứng minh C cũ khác C mới trong khi điểm không đổi.
+00:23:01.924 --> 00:23:08.793
+giao diện phía trước đọc tệp, kiểm tra cấu trúc cơ bản rồi gửi danh sách điểm lên máy chủ phía sau.
 
 200
-00:17:59.517 --> 00:18:06.414
-Mã hóa lại nhiều bản ghi có thể mất thời gian, nên source tổ chức thành job nền và frontend định kỳ hỏi trạng thái.
+00:23:08.993 --> 00:23:22.263
+máy chủ phía sau kiểm tra quyền, xác thực mã số cá nhân, lấy ngữ cảnh sinh viên và học phần, chuẩn hóa điểm, tính vùng số nguyên tố, lấy ba số nguyên tố, gọi Java mã hóa và lưu C.
 
 201
-00:18:06.414 --> 00:18:10.252
-Tuy nhiên tính nhất quán vẫn phải được bảo đảm bằng transaction.
+00:23:22.463 --> 00:23:24.447
+Chiều thứ hai là xem điểm.
 
 202
-00:18:10.252 --> 00:18:20.328
-Backend chuẩn bị kết quả mới trong bộ nhớ, giải mã thử để xác nhận, sau đó mở transaction, khóa từng dòng hoặc dùng điều kiện kiểm tra C cũ chưa bị phiên khác thay đổi.
+00:23:24.647 --> 00:23:27.996
+Sinh viên chọn học phần và nhập mã số cá nhân.
 
 203
-00:18:20.328 --> 00:18:28.185
-Chỉ khi toàn bộ bản ghi cập nhật thành công, hệ thống mới cập nhật PIN hash, public key, key version, thời gian đổi PIN và lịch sử.
+00:23:28.196 --> 00:23:40.207
+máy chủ phía sau xác định sinh viên từ phiên đăng nhập, kiểm tra mã số cá nhân, lấy C và mã giảng viên từ bảng điểm định lý số dư Trung Hoa, tính lại đúng vùng số nguyên tố,
 
 204
-00:18:28.185 --> 00:18:32.863
-Nếu bất kỳ bản ghi nào thất bại, transaction rollback, giữ nguyên PIN và C cũ.
+00:23:40.407 --> 00:23:43.777
+lấy lại ba số nguyên tố rồi gọi Java giải mã.
 
 205
-00:18:32.863 --> 00:18:37.781
-Cách này tránh trạng thái một phần môn học dùng PIN cũ, phần còn lại dùng PIN mới.
+00:23:43.977 --> 00:23:50.633
+Java trả ba số nguyên đã chuẩn hóa; máy chủ phía sau chia cho mười và giao diện phía trước hiển thị.
 
 206
-00:18:37.781 --> 00:18:47.017
-Hướng production cần đưa job và trạng thái ra hàng đợi hoặc kho bền vững, vì lưu job trong RAM có thể mất khi process restart hoặc khi chạy nhiều replica.
+00:23:50.833 --> 00:23:59.324
+Hai chiều phải dùng cùng ngữ cảnh và tạo cùng bí mật dùng chung, nếu không bộ số nguyên tố sẽ khác và kết quả không chính xác.
 
 207
-00:18:48.017 --> 00:18:51.217
-Hệ thống đã có lịch sử đăng nhập và lịch sử đổi PIN.
+00:24:00.024 --> 00:24:04.013
+yêu cầu nhập điểm chứa nhiều dữ liệu nhạy cảm trong một lần.
 
 208
-00:18:51.217 --> 00:18:57.247
-Sau đăng nhập thành công, backend ghi tài khoản, thời gian, địa chỉ IP và vị trí tương đối nếu có.
+00:24:04.213 --> 00:24:09.845
+Phần ngữ cảnh gồm mã học phần, năm học, học kỳ và mã số cá nhân giảng viên.
 
 209
-00:18:57.247 --> 00:19:01.863
-Lịch sử đổi PIN chỉ nên được ghi khi toàn bộ quá trình mã hóa lại hoàn tất.
+00:24:10.045 --> 00:24:13.608
+Mảng danh sách điểm chứa mã sinh viên cùng ba điểm.
 
 210
-00:19:01.863 --> 00:19:09.863
-Để vận hành tốt hơn, có thể thêm audit cho nhập điểm, cập nhật điểm, yêu cầu giải mã, lỗi Java service và thay đổi phiên bản khóa.
+00:24:13.808 --> 00:24:18.885
+tệp nhận dạng phiên đăng nhập được gửi kèm bằng chế độ gửi kèm thông tin phiên.
 
 211
-00:19:09.863 --> 00:19:11.832
-Nhưng log phải được lọc dữ liệu.
+00:24:19.085 --> 00:24:27.555
+Nếu triển khai qua giao thức truyền dữ liệu không có lớp bảo mật đường truyền, tất cả dữ liệu có thể bị quan sát trên đường truyền.
 
 212
-00:19:11.832 --> 00:19:17.678
-Không được console log toàn bộ request body của endpoint nhập điểm vì body chứa PIN và điểm rõ.
+00:24:27.755 --> 00:24:39.616
+Ngay cả khi có lớp bảo mật đường truyền, ghi nhật ký lớp kiểm tra trung gian hoặc câu lệnh bảng ghi nhật ký toàn bộ phần thân yêu cầu vẫn làm lộ mã số cá nhân và điểm vào nhật ký.
 
 213
-00:19:17.678 --> 00:19:21.678
-Không nên ghi shared secret, ba prime hoặc plaintext sau giải mã.
+00:24:39.816 --> 00:24:46.237
+mã nguồn hiện có đoạn nhật ký phần thân yêu cầu và phiên đăng nhập ở đầu địa chỉ xử lý nhập điểm.
 
 214
-00:19:21.678 --> 00:19:28.878
-Log phù hợp gồm request ID, tài khoản, vai trò, mã học phần, số lượng bản ghi, trạng thái, thời gian xử lý và mã lỗi.
+00:24:46.437 --> 00:24:49.957
+Đây là điều phải xóa trước môi trường vận hành thực tế.
 
 215
-00:19:28.878 --> 00:19:32.817
-Đây là nguyên tắc rất quan trọng khi đề tài mang chủ đề bảo mật.
+00:24:50.157 --> 00:25:03.256
+Nên định nghĩa lược đồ dữ liệu yêu cầu, che dữ liệu nhạy cảm tự động cho các trường mã số cá nhân, mật khẩu, tệp nhận dạng phiên và dữ liệu rõ điểm, đặt giới hạn kích thước phần thân yêu cầu,
 
 216
-00:19:33.817 --> 00:19:39.218
-Một video hoặc báo cáo thực nghiệm thuyết phục cần có cả đường thành công và đường lỗi.
+00:25:03.456 --> 00:25:07.339
+mã theo dõi yêu cầu và mã lỗi không chứa gói dữ liệu.
 
 217
-00:19:39.218 --> 00:19:43.439
-Với đăng nhập, kiểm tra tài khoản đúng, sai và vai trò không hợp lệ.
+00:25:07.539 --> 00:25:14.088
+giao diện lập trình ứng dụng phản hồi cũng không nên trả đồng thời dữ liệu rõ cùng C chỉ để gỡ lỗi.
 
 218
-00:19:43.439 --> 00:19:49.958
-Với nhập Excel, kiểm tra file đúng, thiếu cột, MSSV không tồn tại, điểm âm, điểm lớn hơn mười và PIN sai.
+00:25:14.288 --> 00:25:25.573
+Trong phần trình diễn, có thể hiển thị C ở màn hình quản trị để minh họa, nhưng môi trường vận hành thực tế nên tách màn hình quan sát kỹ thuật khỏi phản hồi nghiệp vụ thông thường.
 
 219
-00:19:49.958 --> 00:19:53.683
-Kiểm tra giảng viên không thể nhập học phần không phụ trách.
+00:25:26.273 --> 00:25:31.628
+Ở góc nhìn người dùng, luồng nhập điểm được thiết kế gần với thói quen thực tế.
 
 220
-00:19:53.683 --> 00:20:02.312
-Với giải mã, kiểm tra session hết hạn, sai PIN, học phần chưa có điểm, thiếu public key, không lấy đủ prime và Java service không phản hồi.
+00:25:31.828 --> 00:25:37.417
+Giảng viên không nhập từng dòng thủ công mà chọn đúng học phần rồi tải tệp bảng tính.
 
 221
-00:20:02.312 --> 00:20:08.583
-Với CRT, kiểm tra encrypt rồi decrypt cho kết quả đúng và mọi plaintext nằm trong không đến một trăm.
+00:25:37.617 --> 00:25:41.607
+tệp mẫu có các cột định danh sinh viên và ba giá trị điểm.
 
 222
-00:20:08.583 --> 00:20:16.653
-Với đổi PIN, ghi C trước và sau, xác nhận điểm giữ nguyên, PIN cũ không còn hợp lệ và transaction rollback khi một bản ghi bị lỗi.
+00:25:41.807 --> 00:25:46.308
+Trước khi lưu, giao diện hiển thị danh sách để người dùng kiểm tra.
 
 223
-00:20:16.653 --> 00:20:22.117
-Các kết quả nên có expected result và actual result thay vì chỉ ghi chung là thành công.
+00:25:46.508 --> 00:25:55.724
+Khi bấm lưu, giao diện phía trước tạo gói dữ liệu gồm mã học phần, năm học, học kỳ, mã số cá nhân và mảng danh sách điểm.
 
 224
-00:20:23.117 --> 00:20:26.288
-Giới hạn thứ nhất: CRT không phải mã hóa chuẩn.
+00:25:55.924 --> 00:26:01.620
+Mỗi phần tử có mã sinh viên, điểm giữa kỳ, điểm cuối kỳ và điểm trung bình.
 
 225
-00:20:26.288 --> 00:20:29.526
-Có C và đúng prime thì lấy modulo là ra dữ liệu.
+00:26:01.820 --> 00:26:12.273
+Sau đó giao diện phía trước gửi yêu cầu đến địa chỉ xử lý quản trị viên nhập điểm với chế độ gửi kèm thông tin phiên để tệp nhận dạng phiên đăng nhập đi kèm.
 
 226
-00:20:29.526 --> 00:20:37.825
-Giới hạn thứ hai: PIN có miền nhỏ; băm SHA-256 trực tiếp không salt không phù hợp để chống dò ngoại tuyến trong production.
+00:26:12.473 --> 00:26:22.009
+bài giảng phần trình diễn cho thấy giao diện có thể tải danh sách sinh viên theo học phần, nhận dữ liệu bảng tính và trả thông báo sau khi xử lý.
 
 227
-00:20:37.825 --> 00:20:45.111
-Nên dùng Argon2, scrypt hoặc bcrypt với salt và tham số chi phí phù hợp, đồng thời rate limit ở online flow.
+00:26:22.209 --> 00:26:34.007
+Tuy nhiên, điều quan trọng không phải chỉ là nút nhập dữ liệu hoạt động, mà là dữ liệu sau nút đó phải đi qua đầy đủ các kiểm tra và mã hóa trước khi chạm cơ sở dữ liệu.
 
 228
-00:20:45.111 --> 00:20:48.417
-Giới hạn thứ ba: CRT không tự phát hiện C bị sửa.
+00:26:34.707 --> 00:26:39.165
+Một chi tiết thường bị trình bày sai là ai thực sự đọc tệp bảng tính.
 
 229
-00:20:48.417 --> 00:20:54.557
-Cần cơ chế toàn vẹn như HMAC hoặc mã hóa có xác thực, ví dụ AES-GCM, nếu xây sản phẩm thật.
+00:26:39.365 --> 00:26:49.605
+Trình duyệt của người dùng có quyền truy cập tệp mà họ vừa chọn, nên giao diện phía trước dùng thư viện đọc bảng tính để đọc sổ bảng tính, lấy trang tính,
 
 230
-00:20:54.557 --> 00:21:01.034
-Giới hạn thứ tư: session secret, mật khẩu database và PIN seed không được dùng giá trị mặc định.
+00:26:49.805 --> 00:26:54.115
+ánh xạ tên cột và tạo danh sách đối tượng mã của trình duyệt.
 
 231
-00:21:01.034 --> 00:21:06.296
-Job đổi PIN lưu trong RAM không phù hợp khi restart hoặc scale nhiều instance.
+00:26:54.315 --> 00:26:58.219
+máy chủ phía sau không mở đường dẫn tệp trên máy người dùng.
 
 232
-00:21:06.296 --> 00:21:14.325
-Cuối cùng, quyền đọc SNT, public key, source và API phải được kiểm soát; không thể coi việc giấu thuật toán là bảo mật.
+00:26:58.419 --> 00:27:02.963
+Nó chỉ nhận dữ liệu có cấu trúc đã được giao diện phía trước tạo ra.
 
 233
-00:21:15.325 --> 00:21:23.423
-Để phát triển tiếp, trước hết tách middleware xác thực và phân quyền, kiểm tra quyền theo từng tài nguyên chứ không chỉ theo vai trò.
+00:27:03.163 --> 00:27:12.976
+giao diện phía trước có thể phát hiện sớm các lỗi như thiếu cột, thiếu mã sinh viên, ô điểm không phải số hoặc điểm nằm ngoài khoảng không đến mười.
 
 234
-00:21:23.423 --> 00:21:28.842
-Sinh viên chỉ truy cập bản ghi của mình; giảng viên chỉ thao tác học phần mình phụ trách.
+00:27:13.176 --> 00:27:17.421
+Tuy vậy, kiểm tra giao diện phía trước chỉ phục vụ trải nghiệm.
 
 235
-00:21:28.842 --> 00:21:35.235
-Toàn bộ kết nối phải dùng TLS, secret được đưa vào secret manager, khóa có quy trình rotation và thu hồi.
+00:27:17.621 --> 00:27:22.485
+máy chủ phía sau vẫn phải kiểm tra lại tất cả vì yêu cầu có thể bị sửa.
 
 236
-00:21:35.235 --> 00:21:40.593
-PIN và mật khẩu dùng hàm dẫn xuất chậm có salt, kết hợp rate limit, lockout và cảnh báo.
+00:27:22.685 --> 00:27:29.235
+Nguyên tắc quan trọng là: không tin dữ liệu từ phía người dùng, kể cả khi giao diện đã kiểm tra.
 
 237
-00:21:40.593 --> 00:21:50.639
-Nếu mục tiêu là bảo mật thực tế, có thể giữ CRT như lớp biểu diễn dữ liệu nhưng bọc giá trị hoặc ngữ cảnh nhạy cảm bằng AES-GCM, hoặc dùng HMAC để phát hiện sửa đổi.
+00:27:29.435 --> 00:27:36.688
+Chính máy chủ phía sau mới là nơi quyết định bản ghi nào hợp lệ để đi tiếp vào luồng định lý số dư Trung Hoa.
 
 238
-00:21:50.639 --> 00:21:56.910
-Java service cần authentication nội bộ, health endpoint, timeout, retry có giới hạn và circuit breaker.
+00:27:37.388 --> 00:27:42.017
+thành phần thành phần quản lý điểm đọc sổ bảng tính ngay trong trình duyệt.
 
 239
-00:21:56.910 --> 00:22:04.825
-Job đổi PIN nên chạy trên hàng đợi bền vững, có trạng thái idempotent, khả năng tiếp tục sau restart và metric đo thời gian xử lý.
+00:27:42.217 --> 00:27:51.455
+Nó duyệt trang tính, nhận diện tên cột, lấy mã sinh viên và ba cột điểm, chuyển kiểu dữ liệu rồi kiểm tra miền từ không đến mười.
 
 240
-00:22:05.825 --> 00:22:09.071
-Trước khi kết thúc, hãy tự trả lời các câu hỏi sau.
+00:27:51.655 --> 00:27:58.097
+Những dòng thiếu mã, ô không phải số hoặc điểm ngoài miền được đánh dấu để người dùng sửa sớm.
 
 241
-00:22:09.071 --> 00:22:11.681
-Một, vì sao modulo phải lớn hơn một trăm?
+00:27:58.297 --> 00:28:03.972
+Giao diện còn đối chiếu mã sinh viên với danh sách lớp mà giao diện phía trước đã tải.
 
 242
-00:22:11.681 --> 00:22:15.499
-Hai, nếu muốn giữ hai chữ số thập phân thì phải thay đổi gì?
+00:28:04.172 --> 00:28:09.335
+Đây là trải nghiệm tốt vì lỗi được phát hiện trước khi gửi một lô dữ liệu lớn.
 
 243
-00:22:15.499 --> 00:22:19.700
-Ba, vì sao frontend đọc Excel nhưng backend vẫn phải kiểm tra lại?
+00:28:09.535 --> 00:28:16.212
+Nhưng mọi kiểm tra ở trình duyệt đều có thể bị bỏ qua bằng cách gọi giao diện lập trình ứng dụng thủ công.
 
 244
-00:22:19.700 --> 00:22:22.501
-Bốn, tại sao Java không truy vấn SQL Server?
+00:28:16.412 --> 00:28:23.196
+Vì vậy cùng một quy tắc phải tồn tại ở máy chủ phía sau, và máy chủ phía sau phải là nguồn sự thật.
 
 245
-00:22:22.501 --> 00:22:29.502
-Năm, giảng viên và sinh viên dùng cặp PIN public key khác nhau nhưng vẫn tạo cùng shared secret bằng cách nào?
+00:28:23.396 --> 00:28:32.100
+Một vấn đề khác là giao diện phía trước gửi trường điểm trung bình từ tệp thay vì để máy chủ phía sau tự tính theo công thức chính thức.
 
 246
-00:22:29.502 --> 00:22:32.684
-Sáu, startIndex được tính từ những thành phần nào?
+00:28:32.300 --> 00:28:40.556
+Nếu tệp bảng tính có điểm trung bình không nhất quán với điểm giữa kỳ và điểm cuối kỳ, mã nguồn hiện có thể tin giá trị đó.
 
 247
-00:22:32.684 --> 00:22:36.376
-Bảy, DIEM_CRT lưu dữ liệu gì và cố ý không lưu dữ liệu gì?
+00:28:40.756 --> 00:28:50.292
+Cách sửa là máy chủ phía sau tự tính hoặc xác minh điểm trung bình, đồng thời phiên bản hóa công thức nếu từng học phần có trọng số khác nhau.
 
 248
-00:22:36.376 --> 00:22:38.540
-Tám, vì sao C được lưu dạng chuỗi?
+00:28:50.492 --> 00:29:02.353
+kiểm thử bảng tính phải bao gồm tên cột đổi tên, dòng trùng mã số sinh viên, số dùng dấu phẩy, ô trống, công thức bảng tính, điểm ngoài miền và sinh viên không thuộc lớp.
 
 249
-00:22:38.540 --> 00:22:42.041
-Chín, điều gì xảy ra nếu đổi PIN mà không mã hóa lại C?
+00:29:03.053 --> 00:29:06.637
+địa chỉ xử lý nhập điểm phải xử lý nhiều lớp kiểm tra.
 
 250
-00:22:42.041 --> 00:22:47.005
-Mười, vì sao CRT không thể thay thế hoàn toàn AES hoặc một hệ mật mã hiện đại?
+00:29:06.837 --> 00:29:11.616
+Trước hết, yêu cầu phải có phiên đăng nhập hợp lệ và vai trò giảng viên.
 
 251
-00:22:47.005 --> 00:22:52.033
-Nếu giải thích trôi chảy mười câu này, bạn đã nắm được phần cốt lõi của đề tài.
+00:29:11.816 --> 00:29:21.523
+Tiếp theo máy chủ phía sau tìm học phần theo mã học phần, năm học và học kỳ, rồi đối chiếu mã giảng viên phụ trách với tài khoản hiện tại.
 
 252
-00:22:53.033 --> 00:22:58.487
-Tóm lại, giá trị của đồ án không nằm ở một màn hình CRUD hay một công thức đứng riêng lẻ.
+00:29:21.723 --> 00:29:27.845
+Sau đó hệ thống xác thực mã số cá nhân giảng viên bằng giá trị băm của mã số cá nhân đã lưu.
 
 253
-00:22:58.487 --> 00:23:03.818
-Chuỗi bằng chứng đầy đủ là: giảng viên hợp lệ nhập dữ liệu cho học phần mình phụ trách;
+00:29:28.045 --> 00:29:37.453
+Với từng sinh viên, máy chủ phía sau kiểm tra mã sinh viên tồn tại, thuộc ngữ cảnh học phần, có mã lớp, mã khoa và khóa công khai.
 
 254
-00:23:03.818 --> 00:23:05.840
-frontend chuyển Excel thành JSON;
+00:29:37.653 --> 00:29:40.960
+Ba điểm phải là số trong khoảng từ không đến mười.
 
 255
-00:23:05.840 --> 00:23:08.843
-backend kiểm tra session, quyền, PIN và ngữ cảnh;
+00:29:41.160 --> 00:29:45.363
+Nếu thiếu bất kỳ dữ liệu nào, bản ghi đó không được mã hóa.
 
 256
-00:23:08.843 --> 00:23:12.029
-Java dẫn xuất prime range và mã hóa ba điểm thành C;
+00:29:45.563 --> 00:29:56.336
+máy chủ phía sau còn kiểm tra dịch vụ Java có trả vùng số nguyên tố hợp lệ hay không, truy vấn dữ liệu số nguyên tố có lấy đủ đúng ba số nguyên tố hay không,
 
 257
-00:23:12.029 --> 00:23:16.993
-SQL Server lưu C cùng ngữ cảnh thay vì lưu trực tiếp GK, CK và TB trong DIEM_CRT;
+00:29:56.536 --> 00:30:00.355
+và kết quả mã hóa có chứa giá trị C hợp lệ hay không.
 
 258
-00:23:16.993 --> 00:23:21.527
-sinh viên hợp lệ nhập PIN để tái lập cùng bộ prime và khôi phục đúng điểm;
+00:30:00.555 --> 00:30:06.016
+Những bước này ngăn tình trạng lưu một bản ghi nửa vời mà sau đó không thể giải mã.
 
 259
-00:23:21.527 --> 00:23:29.432
-khi PIN thay đổi, hệ thống giải mã bằng tham số cũ, mã hóa lại bằng tham số mới trong transaction, tạo C mới nhưng bảo toàn điểm.
+00:30:06.716 --> 00:30:15.889
+Trong vòng lặp xử lý từng sinh viên, máy chủ phía sau kiểm tra mã số sinh viên tồn tại và lấy dữ liệu lớp, khoa, khóa công khai.
 
 260
-00:23:29.432 --> 00:23:40.033
-CRT trong dự án là một cơ chế học thuật có giới hạn, nhưng hệ thống đã minh họa rõ cách tích hợp toán học, cơ sở dữ liệu, web và bảo mật thành một luồng phần mềm hoàn chỉnh.
+00:30:16.089 --> 00:30:21.273
+Tuy nhiên kiểm tra tồn tại không đồng nghĩa sinh viên đăng ký học phần đang nhập.
+
+261
+00:30:21.473 --> 00:30:32.545
+Nếu địa chỉ xử lý không liên kết bảng thời khóa biểu theo sinh viên, mã học phần, năm và kỳ, một yêu cầu tự tạo có thể gửi mã số sinh viên ngoài danh sách lớp.
+
+262
+00:30:32.745 --> 00:30:38.868
+giao diện phía trước thường ngăn điều đó, nhưng giao diện phía trước không phải hàng rào bảo mật.
+
+263
+00:30:39.068 --> 00:30:45.212
+Quy tắc đúng là trước khi mã hóa, máy chủ phía sau phải xác nhận đăng ký học phần cụ thể.
+
+264
+00:30:45.412 --> 00:30:50.553
+Nếu có học phần chung nhiều lớp, thiết kế cần nêu rõ cách xác định phạm vi.
+
+265
+00:30:50.753 --> 00:31:00.823
+Khi lô dữ liệu có một dòng ngoài lớp, hệ thống phải quyết định từ chối toàn bộ hay trả danh sách lỗi; quyết định đó phải nhất quán với tính nguyên tử.
+
+266
+00:31:01.023 --> 00:31:07.465
+Đây là ví dụ cho thấy kiểm tra dữ liệu nghiệp vụ quan trọng ngang thuật toán định lý số dư Trung Hoa.
+
+267
+00:31:07.665 --> 00:31:14.343
+Một hệ mã hóa đúng về toán học vẫn có thể bảo vệ sai bản ghi nếu kiểm tra hợp lệ nghiệp vụ thiếu.
+
+268
+00:31:15.043 --> 00:31:18.477
+địa chỉ xử lý hiện xử lý lần lượt từng sinh viên.
+
+269
+00:31:18.677 --> 00:31:30.645
+Với mỗi dòng, máy chủ phía sau truy vấn ngữ cảnh, gọi Java để lấy vùng chỉ số, lấy số nguyên tố, gọi mã hóa và thêm mới hoặc cập nhật hệ quản trị cơ sở dữ liệu.
+
+270
+00:31:30.845 --> 00:31:34.280
+Không có một giao dịch bao phủ toàn bộ lô dữ liệu.
+
+271
+00:31:34.480 --> 00:31:41.691
+Nếu Java dừng hoặc cơ sở dữ liệu lỗi ở dòng thứ năm mươi, bốn mươi chín dòng đầu có thể đã được lưu.
+
+272
+00:31:41.891 --> 00:31:46.691
+Người dùng nhận thông báo lỗi nhưng dữ liệu ở trạng thái thành công một phần.
+
+273
+00:31:46.891 --> 00:31:54.699
+Điều đó gây khó khi chạy lại vì thêm mới hoặc cập nhật có thể cập nhật đè và khóa hiện tại không đủ chiều thời gian.
+
+274
+00:31:54.899 --> 00:31:57.523
+Một thiết kế chắc chắn hơn gồm ba pha.
+
+275
+00:31:57.723 --> 00:32:02.992
+Pha một đọc và kiểm tra hợp lệ toàn bộ lô dữ liệu, không thay đổi dữ liệu.
+
+276
+00:32:03.192 --> 00:32:07.629
+Pha hai tính toán C hoặc ghi vào vùng dữ liệu tạm với trạng thái.
+
+277
+00:32:07.829 --> 00:32:14.571
+Pha ba mở giao dịch ngắn, kiểm tra lạc quan phiên bản rồi hợp nhất toàn bộ và xác nhận giao dịch.
+
+278
+00:32:14.771 --> 00:32:24.563
+Nếu lô dữ liệu quá lớn, có thể dùng tác vụ nền mã định danh, khả năng chạy lặp lại an toàn khóa và trạng thái từng phần nhưng phải hiển thị rõ.
+
+279
+00:32:24.763 --> 00:32:34.597
+kiểm thử quan trọng là cố tình tắt Java ở dòng k và xác minh cơ sở dữ liệu hoặc không đổi gì, hoặc có một cơ chế tiếp tục được định nghĩa.
+
+280
+00:32:34.797 --> 00:32:38.552
+Không nên để trạng thái nửa chừng trở thành hành vi ngẫu nhiên.
+
+281
+00:32:39.252 --> 00:32:46.975
+định lý số dư Trung Hoa và kiểu số nguyên lớn làm việc trên số nguyên, trong khi điểm thường có một chữ số thập phân.
+
+282
+00:32:47.175 --> 00:32:52.465
+Vì vậy máy chủ phía sau chuẩn hóa mỗi điểm bằng cách nhân mười và làm tròn.
+
+283
+00:32:52.665 --> 00:32:55.503
+Điểm tám phẩy năm trở thành tám mươi lăm.
+
+284
+00:32:55.703 --> 00:32:57.708
+Điểm bảy trở thành bảy mươi.
+
+285
+00:32:57.908 --> 00:32:59.849
+Điểm mười trở thành một trăm.
+
+286
+00:33:00.049 --> 00:33:04.657
+Khi giải mã, máy chủ phía sau chia kết quả cho mười để hiển thị lại.
+
+287
+00:33:04.857 --> 00:33:09.252
+Cần lưu ý độ chính xác của thiết kế này chỉ giữ một chữ số thập phân.
+
+288
+00:33:09.452 --> 00:33:18.519
+Ví dụ chín phẩy hai ba nhân mười bằng chín mươi hai phẩy ba; hàm làm tròn cho kết quả chín mươi hai, nên khi hiển thị sẽ là chín phẩy hai.
+
+289
+00:33:18.719 --> 00:33:24.799
+Đây không phải lỗi định lý số dư Trung Hoa mà là quyết định lượng tử hóa của bước chuẩn hóa.
+
+290
+00:33:24.999 --> 00:33:31.889
+Nếu muốn giữ hai chữ số thập phân, hệ thống phải nhân một trăm và chọn mô-đun lớn hơn giá trị tối đa một nghìn.
+
+291
+00:33:32.589 --> 00:33:35.043
+Chuẩn hóa là một phép lượng tử hóa.
+
+292
+00:33:35.243 --> 00:33:39.360
+Với hệ số mười, điểm tám phẩy năm trở thành tám mươi lăm.
+
+293
+00:33:39.560 --> 00:33:51.123
+Nếu điểm đầu vào có hai chữ số thập phân, ví dụ tám phẩy năm bảy, nhân mười được tám mươi lăm phẩy bảy và làm tròn thành tám mươi sáu; khi giải mã hiển thị tám phẩy sáu.
+
+294
+00:33:51.323 --> 00:33:56.251
+Sai số lớn nhất do làm tròn về một chữ số thập phân là không phẩy không năm.
+
+295
+00:33:56.451 --> 00:34:01.976
+Miền số nguyên là từ không đến một trăm nên mỗi số nguyên tố phải lớn hơn một trăm.
+
+296
+00:34:02.176 --> 00:34:10.517
+Nếu muốn giữ hai chữ số thập phân, hệ số phải là một trăm, miền trở thành không đến một nghìn và mọi mô-đun phải lớn hơn một nghìn.
+
+297
+00:34:10.717 --> 00:34:17.352
+Ngoài ra cần thống nhất quy tắc làm tròn giữa mã của trình duyệt, Java, bảng tính và báo cáo.
+
+298
+00:34:17.552 --> 00:34:29.029
+thư viện toán làm tròn với số dấu phẩy động có thể gặp giá trị biên, vì vậy môi trường vận hành thực tế nên dùng số thập phân hoặc biểu diễn điểm bằng số nguyên ngay từ đầu.
+
+299
+00:34:29.229 --> 00:34:39.213
+Khi hội đồng hỏi đơn vị của a i, câu trả lời là số nguyên đã chuẩn hóa, không còn đơn vị điểm trực tiếp; muốn hiển thị phải chia cho hệ số chuẩn hóa.
+
+300
+00:34:39.913 --> 00:34:42.196
+Bây giờ đến nền tảng toán học.
+
+301
+00:34:42.396 --> 00:34:49.415
+Giả sử p một, p hai và p ba là ba số nguyên tố khác nhau, nên chúng đôi một nguyên tố cùng nhau.
+
+302
+00:34:49.615 --> 00:34:58.660
+Ta muốn tìm C sao cho phần dư của C khi chia p một là a một, phần dư khi chia p hai là a hai và phần dư khi chia p ba là a ba.
+
+303
+00:34:58.860 --> 00:35:07.415
+Định lý số dư Trung Hoa bảo đảm hệ đồng dư này có một nghiệm duy nhất trong khoảng từ không đến M trừ một, với M bằng tích ba mô-đun.
+
+304
+00:35:07.615 --> 00:35:15.081
+Trong hệ thống, a một, a hai và a ba chính là điểm giữa kỳ, điểm cuối kỳ và điểm trung bình sau chuẩn hóa.
+
+305
+00:35:15.281 --> 00:35:18.780
+Nhờ vậy, một số C có thể đại diện cho ba điểm.
+
+306
+00:35:18.980 --> 00:35:27.129
+Khi biết đúng p một, p hai và p ba, ta không cần chạy lại toàn bộ công thức để giải mã; chỉ cần lấy C mô-đun từng p.
+
+307
+00:35:27.329 --> 00:35:34.305
+Điều kiện quan trọng là mỗi p phải lớn hơn giá trị điểm tối đa sau chuẩn hóa, tức lớn hơn một trăm.
+
+308
+00:35:35.005 --> 00:35:39.464
+Điều kiện đôi một nguyên tố cùng nhau không phải chi tiết trang trí.
+
+309
+00:35:39.664 --> 00:35:42.672
+Trong công thức, M i bằng tích M chia p i.
+
+310
+00:35:42.872 --> 00:35:46.755
+Ta cần tìm y i sao cho M i nhân y i đồng dư một theo p i.
+
+311
+00:35:46.955 --> 00:35:52.032
+Nghịch đảo này chỉ tồn tại khi ước chung lớn nhất của M i và p i bằng một.
+
+312
+00:35:52.232 --> 00:36:02.984
+Nếu các mô-đun có thừa số chung, nghịch đảo theo phép chia dư có thể không tồn tại, hệ đồng dư có thể vô nghiệm hoặc có nhiều nghiệm không đạt tính duy nhất mong muốn.
+
+313
+00:36:03.184 --> 00:36:07.771
+Hệ thống chọn ba số nguyên tố khác nhau nên điều kiện tự động đúng.
+
+314
+00:36:07.971 --> 00:36:15.565
+Khi giải thích trực giác, mỗi hạng a i nhân M i nhân y i được xây để bằng a i ở mô-đun p i nhưng bằng không ở các mô-đun còn lại.
+
+315
+00:36:15.765 --> 00:36:19.499
+Cộng ba hạng tạo ra một số thỏa đồng thời cả ba phần dư.
+
+316
+00:36:19.699 --> 00:36:23.219
+Nghiệm là duy nhất trong khoảng từ không đến M trừ một.
+
+317
+00:36:23.419 --> 00:36:26.448
+Bất kỳ nghiệm khác chỉ khác C một bội của M.
+
+318
+00:36:26.648 --> 00:36:35.779
+Java dùng phép tìm nghịch đảo theo phép chia dư nên nếu số nguyên tố không hợp lệ, phép tính sẽ báo lỗi thay vì âm thầm cho kết quả sai.
+
+319
+00:36:36.479 --> 00:36:39.615
+Công thức xây dựng nghiệm được thực hiện như sau.
+
+320
+00:36:39.815 --> 00:36:43.121
+Đầu tiên tính M bằng tích của ba số nguyên tố.
+
+321
+00:36:43.321 --> 00:36:46.521
+Với mỗi vị trí i, tính M i bằng M chia p i.
+
+322
+00:36:46.721 --> 00:36:50.177
+Sau đó tìm y i là nghịch đảo mô-đun của M i theo p i.
+
+323
+00:36:50.377 --> 00:36:54.281
+Cuối cùng cộng ba hạng a i nhân M i nhân y i và lấy mô-đun M.
+
+324
+00:36:54.481 --> 00:37:06.769
+Vì tích các số nguyên tố có thể vượt giới hạn số nguyên sáu mươi bốn bit, dịch vụ Java dùng kiểu số nguyên lớn cho toàn bộ phép nhân, chia, mô-đun và nghịch đảo theo phép chia dư.
+
+325
+00:37:06.969 --> 00:37:16.868
+Trước khi tính, dịch vụ kiểm tra số lượng điểm bằng số lượng số nguyên tố, danh sách không rỗng, điểm không âm và mỗi điểm nhỏ hơn mô-đun tương ứng.
+
+326
+00:37:17.068 --> 00:37:26.476
+Nếu một điểm lớn hơn hoặc bằng số nguyên tố, phép lấy dư sẽ không còn khôi phục được đúng giá trị ban đầu, nên yêu cầu phải bị từ chối.
+
+327
+00:37:27.176 --> 00:37:28.904
+Ta tính chi tiết ví dụ.
+
+328
+00:37:29.104 --> 00:37:37.595
+Tích M bằng một trăm lẻ một nhân một trăm lẻ ba nhân một trăm lẻ bảy, bằng một triệu một trăm mười ba nghìn một trăm hai mươi mốt.
+
+329
+00:37:37.795 --> 00:37:42.957
+M một bằng M chia một trăm lẻ một, bằng mười một nghìn không trăm hai mươi mốt.
+
+330
+00:37:43.157 --> 00:37:47.616
+Nghịch đảo y một của M một theo một trăm lẻ một bằng năm mươi chín.
+
+331
+00:37:47.816 --> 00:37:53.704
+Hạng thứ nhất là tám mươi lăm nhân mười một nghìn không trăm hai mươi mốt nhân năm mươi chín.
+
+332
+00:37:53.904 --> 00:37:57.851
+M hai bằng mười nghìn tám trăm lẻ bảy; y hai bằng chín mươi.
+
+333
+00:37:58.051 --> 00:38:02.019
+M ba bằng mười nghìn bốn trăm lẻ ba; y ba bằng năm mươi tám.
+
+334
+00:38:02.219 --> 00:38:07.829
+Cộng ba hạng rồi lấy mô-đun M thu được C bằng một trăm mười nghìn không trăm bảy mươi bốn.
+
+335
+00:38:08.029 --> 00:38:16.541
+Kiểm tra: C mô-đun một trăm lẻ một bằng tám mươi lăm; mô-đun một trăm lẻ ba bằng bảy mươi; mô-đun một trăm lẻ bảy bằng bảy mươi tám.
+
+336
+00:38:16.741 --> 00:38:20.475
+Chia mười trở lại tám phẩy năm, bảy và bảy phẩy tám.
+
+337
+00:38:20.675 --> 00:38:26.072
+Bảng trên màn hình cho thấy từng M i, y i và hạng tương ứng để bạn có thể tính lại.
+
+338
+00:38:26.772 --> 00:38:30.079
+Các số nguyên tố trong bảng nằm ở vị trí rất lớn.
+
+339
+00:38:30.279 --> 00:38:37.020
+Tích ba số nguyên tố và các hạng a i nhân M i nhân y i có thể vượt giới hạn số nguyên sáu mươi bốn bit.
+
+340
+00:38:37.220 --> 00:38:47.673
+mã của trình duyệt kiểu số chỉ biểu diễn chính xác số nguyên đến hai lũy thừa năm mươi ba trừ một, nên không phù hợp cho định lý số dư Trung Hoa thật của hệ thống.
+
+341
+00:38:47.873 --> 00:38:53.996
+dịch vụ Java dùng kiểu số nguyên lớn cho tích, chia, mô-đun, lũy thừa và nghịch đảo.
+
+342
+00:38:54.196 --> 00:39:00.383
+máy chủ phía sau truyền các số lớn dưới dạng chuỗi dữ liệu có cấu trúc để tránh mất chính xác.
+
+343
+00:39:00.583 --> 00:39:06.983
+máy chủ cơ sở dữ liệu cũng lưu C bằng chuỗi văn bản độ dài lớn thay vì kiểu số nguyên lớn.
+
+344
+00:39:07.183 --> 00:39:09.593
+Đây là quyết định kỹ thuật hợp lý.
+
+345
+00:39:09.793 --> 00:39:18.391
+Đổi lại, cơ sở dữ liệu không thể áp dụng ràng buộc số học trực tiếp lên C; ứng dụng phải xác minh chuỗi là số nguyên không âm.
+
+346
+00:39:18.591 --> 00:39:28.489
+Khi kiểm thử cần có trường hợp C vượt kiểu số nguyên sáu mươi bốn bit, số âm, chuỗi có ký tự, số nguyên tố trùng nhau và điểm bằng số nguyên tố.
+
+347
+00:39:28.689 --> 00:39:35.665
+Phòng thực hành kiểu số nguyên lớn trong ứng dụng ôn tập mô phỏng chính xác lý do không được dùng kiểu số.
+
+348
+00:39:36.365 --> 00:39:39.331
+Hãy đi qua một ví dụ nhỏ để thấy rõ ý nghĩa.
+
+349
+00:39:39.531 --> 00:39:45.333
+Một sinh viên có điểm giữa kỳ tám phẩy năm, cuối kỳ bảy và trung bình bảy phẩy tám.
+
+350
+00:39:45.533 --> 00:39:50.205
+Sau chuẩn hóa, ta có tám mươi lăm, bảy mươi và bảy mươi tám.
+
+351
+00:39:50.405 --> 00:39:56.336
+Để dễ tính, giả sử ba mô-đun là một trăm lẻ một, một trăm lẻ ba và một trăm lẻ bảy.
+
+352
+00:39:56.536 --> 00:40:03.213
+Đây chỉ là ví dụ minh họa; hệ thống thật lấy các số nguyên tố ở vị trí rất lớn trong bảng số nguyên tố.
+
+353
+00:40:03.413 --> 00:40:13.675
+Bài toán trở thành tìm C sao cho C chia một trăm lẻ một dư tám mươi lăm, chia một trăm lẻ ba dư bảy mươi, và chia một trăm lẻ bảy dư bảy mươi tám.
+
+354
+00:40:13.875 --> 00:40:20.637
+Áp dụng công thức định lý số dư Trung Hoa thu được một nghiệm là một trăm mười nghìn không trăm bảy mươi bốn.
+
+355
+00:40:21.337 --> 00:40:23.023
+Bây giờ kiểm tra ngược.
+
+356
+00:40:23.223 --> 00:40:28.492
+Một trăm mười nghìn không trăm bảy mươi bốn mô-đun một trăm lẻ một bằng tám mươi lăm.
+
+357
+00:40:28.692 --> 00:40:31.103
+mô-đun một trăm lẻ ba bằng bảy mươi.
+
+358
+00:40:31.303 --> 00:40:34.033
+mô-đun một trăm lẻ bảy bằng bảy mươi tám.
+
+359
+00:40:34.233 --> 00:40:39.652
+Chia cả ba kết quả cho mười, ta trở lại tám phẩy năm, bảy và bảy phẩy tám.
+
+360
+00:40:39.852 --> 00:40:44.332
+cơ sở dữ liệu có thể lưu C thay cho ba cột điểm trong bảng mã hóa.
+
+361
+00:40:44.532 --> 00:40:48.265
+Nhưng cần nhắc lại: C không phải một bí mật tuyệt đối.
+
+362
+00:40:48.465 --> 00:40:52.455
+Nếu bộ số nguyên tố bị lộ, khôi phục điểm là trực tiếp.
+
+363
+00:40:52.655 --> 00:41:03.385
+Vì vậy thiết kế dùng ngữ cảnh và bí mật dùng chung để xác định vị trí số nguyên tố, đồng thời phải bảo vệ máy chủ phía sau, khóa công khai, mã số cá nhân,
+
+364
+00:41:03.585 --> 00:41:06.871
+phiên đăng nhập và quyền đọc bảng số nguyên tố.
+
+365
+00:41:07.571 --> 00:41:13.864
+Tính duy nhất của định lý số dư Trung Hoa là tính chất toán học, không phải định nghĩa bảo mật.
+
+366
+00:41:14.064 --> 00:41:17.904
+Khi biết ba số nguyên tố, giải mã chỉ là ba phép mô-đun.
+
+367
+00:41:18.104 --> 00:41:25.613
+Không có bước kiểm tra thẻ, không có giá trị chỉ dùng một lần và không có tính ngẫu nhiên trong công thức tạo C.
+
+368
+00:41:25.813 --> 00:41:30.912
+Với cùng ba điểm và cùng bộ số nguyên tố, kết quả C luôn giống nhau.
+
+369
+00:41:31.112 --> 00:41:43.528
+Một hệ mã hóa hiện đại cần che giấu quan hệ giữa dữ liệu rõ và bản mã dưới nhiều truy vấn, thường yêu cầu tính ngẫu nhiên và một mô hình an toàn như mô hình an toàn chống phân biệt
+
+370
+00:41:43.728 --> 00:41:47.035
+bản mã hoặc mạnh hơn là mã hóa kèm xác thực.
+
+371
+00:41:47.235 --> 00:41:51.053
+định lý số dư Trung Hoa không cung cấp các thuộc tính đó.
+
+372
+00:41:51.253 --> 00:41:56.373
+Trong dự án, mã số cá nhân và khóa công khai chỉ giúp chọn bộ số nguyên tố.
+
+373
+00:41:56.573 --> 00:42:00.669
+Chúng không biến phép mô-đun thành một cấu phần cơ sở mã hóa chuẩn.
+
+374
+00:42:00.869 --> 00:42:12.923
+Vì vậy câu nói đúng là: định lý số dư Trung Hoa đóng gói ba số nguyên thành một đại diện duy nhất trong bảng điểm định lý số dư Trung Hoa và yêu cầu tái lập đúng mô-đun để đọc lại.
+
+375
+00:42:13.123 --> 00:42:20.461
+Câu nói không đúng là: định lý số dư Trung Hoa tự bảo đảm rằng lộ cơ sở dữ liệu vẫn không thể biết điểm.
+
+376
+00:42:20.661 --> 00:42:23.861
+Phân biệt này rất quan trọng khi bảo vệ đồ án.
+
+377
+00:42:24.561 --> 00:42:29.148
+Hệ thống không dùng một bộ số nguyên tố cố định cho tất cả sinh viên.
+
+378
+00:42:29.348 --> 00:42:37.284
+Để hai phía có thể tái lập cùng vùng số nguyên tố, dịch vụ Java mô phỏng trao đổi khóa cơ chế trao đổi khóa mô phỏng.
+
+379
+00:42:37.484 --> 00:42:46.145
+Mỗi người có mã số cá nhân đóng vai trò số mũ bí mật và khóa công khai bằng g lũy thừa mã số cá nhân mô-đun một số nguyên tố lớn P.
+
+380
+00:42:46.345 --> 00:42:52.447
+Khi mã hóa, giảng viên dùng khóa công khai của sinh viên lũy thừa mã số cá nhân giảng viên.
+
+381
+00:42:52.647 --> 00:42:58.684
+Khi giải mã, sinh viên dùng khóa công khai của giảng viên lũy thừa mã số cá nhân sinh viên.
+
+382
+00:42:58.884 --> 00:43:08.057
+Do tính chất lũy thừa mô-đun, hai kết quả đều tương ứng với g lũy thừa tích hai mã số cá nhân mô-đun P, nên tạo cùng bí mật dùng chung.
+
+383
+00:43:08.257 --> 00:43:14.785
+Đây là lý do hai luồng dùng cặp đầu vào khác nhau nhưng vẫn dẫn xuất được cùng vùng số nguyên tố.
+
+384
+00:43:14.985 --> 00:43:25.908
+Trong báo cáo và khi thuyết trình, cần gọi đây là cơ chế mô phỏng phục vụ đồ án, không tuyên bố đây là hệ thống quản lý khóa môi trường vận hành thực tế hoàn chỉnh.
+
+385
+00:43:26.608 --> 00:43:31.344
+Gọi mã số cá nhân giảng viên là x và mã số cá nhân sinh viên là y.
+
+386
+00:43:31.544 --> 00:43:35.085
+khóa công khai giảng viên bằng g lũy thừa x mô-đun P.
+
+387
+00:43:35.285 --> 00:43:38.677
+khóa công khai sinh viên bằng g lũy thừa y mô-đun P.
+
+388
+00:43:38.877 --> 00:43:45.789
+Khi nhập điểm, Java lấy khóa công khai sinh viên lũy thừa x, thu được g lũy thừa y nhân x mô-đun P.
+
+389
+00:43:45.989 --> 00:43:52.773
+Khi xem điểm, Java lấy khóa công khai giảng viên lũy thừa y, thu được g lũy thừa x nhân y mô-đun P.
+
+390
+00:43:52.973 --> 00:43:56.131
+Phép nhân giao hoán nên hai kết quả giống nhau.
+
+391
+00:43:56.331 --> 00:44:00.384
+Nhờ vậy hai luồng không cần truyền mã số cá nhân của bên kia.
+
+392
+00:44:00.584 --> 00:44:11.507
+Tuy nhiên mã số cá nhân sáu chữ số có độ ngẫu nhiên thấp và khóa công khai được sinh trực tiếp từ mã số cá nhân, nên đây chỉ là mô phỏng cơ chế trao đổi khóa mô phỏng.
+
+393
+00:44:11.707 --> 00:44:22.373
+Hệ thống môi trường vận hành thực tế phải dùng riêng tư khóa ngẫu nhiên đủ mạnh, tham số nhóm được chuẩn hóa, bảo vệ chống nhóm con nhỏ và quản lý vòng đời khóa.
+
+394
+00:44:22.573 --> 00:44:26.541
+Không nên dùng mã số cá nhân người dùng làm riêng tư số mũ.
+
+395
+00:44:26.741 --> 00:44:33.077
+Trong bài giảng, phương trình trên giúp trả lời chính xác vì sao hai phía tái lập cùng vùng chỉ số.
+
+396
+00:44:33.777 --> 00:44:44.316
+mã nguồn hệ quản trị cơ sở dữ liệu dùng hàm băm hai trăm năm mươi sáu trực tiếp cho mật khẩu và mã số cá nhân, không thấy muối ngẫu nhiên riêng từng tài khoản.
+
+397
+00:44:44.516 --> 00:44:47.993
+mã số cá nhân sáu chữ số chỉ có một triệu khả năng.
+
+398
+00:44:48.193 --> 00:44:55.319
+Nếu cơ sở dữ liệu bị lộ, kẻ tấn công có thể băm toàn bộ không gian mã số cá nhân và so sánh rất nhanh.
+
+399
+00:44:55.519 --> 00:45:01.620
+Dữ liệu mẫu còn dùng chung giá trị một hai ba bốn năm sáu, làm giảm an toàn hơn nữa.
+
+400
+00:45:01.820 --> 00:45:11.377
+giá trị băm mật mã nhanh như hàm băm được thiết kế để tính nhanh, trái với nhu cầu lưu thông tin xác thực là làm mỗi lần đoán tốn nhiều tài nguyên.
+
+401
+00:45:11.577 --> 00:45:23.972
+Giải pháp là hàm dẫn xuất khóa chậm có bộ nhớ hoặc hàm băm mật khẩu chậm, muối ngẫu nhiên ngẫu nhiên riêng từng tài khoản, bí mật bổ sung phía máy chủ và phiên bản để chuyển đổi dữ liệu.
+
+402
+00:45:24.172 --> 00:45:35.393
+giao diện lập trình ứng dụng nhập mã số cá nhân cần giới hạn tần suất theo tài khoản và địa chỉ mạng, tăng dần thời gian chờ, khóa tạm thời có kiểm soát và kiểm toán.
+
+403
+00:45:35.593 --> 00:45:40.372
+Khi đổi thông tin xác thực mặc định, phải buộc người dùng đổi ở lần đầu.
+
+404
+00:45:40.572 --> 00:45:46.844
+khóa công khai phụ thuộc mã số cá nhân cũng phải được tái tạo trong quy trình chuyển đổi dữ liệu.
+
+405
+00:45:47.044 --> 00:45:51.076
+Đây là lỗi nghiêm trọng độc lập với định lý số dư Trung Hoa.
+
+406
+00:45:51.776 --> 00:46:04.683
+Sau khi có bí mật dùng chung, Java ghép nó với ngữ cảnh của bản ghi: mã khoa, mã lớp, mã sinh viên, mã học phần và chuỗi phiên bản phiên bản thuật toán định lý số dư Trung Hoa thứ nhất.
+
+407
+00:46:04.883 --> 00:46:12.157
+Chuỗi kết quả được băm bằng thuật toán băm hai trăm năm mươi sáu bit rồi diễn giải thành một số nguyên lớn B.
+
+408
+00:46:12.357 --> 00:46:19.696
+Việc đưa ngữ cảnh vào hàm băm giúp cùng một cặp người dùng nhưng khác học phần có thể nhận vùng số nguyên tố khác.
+
+409
+00:46:19.896 --> 00:46:26.253
+Mã phiên bản giúp hệ thống có khả năng phân biệt thuật toán nếu sau này thay đổi cách dẫn xuất.
+
+410
+00:46:26.453 --> 00:46:36.011
+Khi mã hóa lại sau đổi mã số cá nhân, hệ thống phải dùng đúng ngữ cảnh đã lưu tại thời điểm mã hóa, không chỉ đọc dữ liệu quản lý hiện tại,
+
+411
+00:46:36.211 --> 00:46:40.968
+vì sinh viên có thể chuyển lớp hoặc thông tin học phần có thể thay đổi.
+
+412
+00:46:41.168 --> 00:46:50.405
+Đó là lý do bảng điểm định lý số dư Trung Hoa lưu mã khoa tại thời điểm mã hóa, mã lớp tại thời điểm mã hóa và một số trường phiên bản.
+
+413
+00:46:51.105 --> 00:46:58.209
+bí mật dùng chung được ghép với mã khoa, mã lớp, mã sinh viên, mã học phần và chuỗi phiên bản.
+
+414
+00:46:58.409 --> 00:47:04.276
+Chuỗi này đi qua hàm băm hai trăm năm mươi sáu và được diễn giải thành số nguyên lớn B.
+
+415
+00:47:04.476 --> 00:47:10.108
+Đưa ngữ cảnh vào hàm băm giúp cùng cặp người dùng nhưng khác môn nhận vùng chỉ số khác.
+
+416
+00:47:10.308 --> 00:47:14.233
+phiên bản cho phép thay thuật toán dẫn xuất trong tương lai.
+
+417
+00:47:14.433 --> 00:47:16.652
+Tuy nhiên mọi trường phải ổn định.
+
+418
+00:47:16.852 --> 00:47:26.260
+Nếu mã lớp của sinh viên thay đổi sau khi mã hóa và máy chủ phía sau lấy dữ liệu hiện tại thay vì bản chụp ngữ cảnh, vùng chỉ số sẽ khác.
+
+419
+00:47:26.460 --> 00:47:33.009
+Đó là lý do bảng điểm định lý số dư Trung Hoa lưu bản chụp ngữ cảnh khoa, lớp và khóa công khai.
+
+420
+00:47:33.209 --> 00:47:40.057
+Khi đổi mã số cá nhân hoặc chuyển đổi dữ liệu, phải đọc đúng bản chụp ngữ cảnh đã dùng lúc tạo C.
+
+421
+00:47:40.257 --> 00:47:48.748
+Cũng cần định nghĩa chuẩn biểu diễn dữ liệu: thứ tự trường, ký tự phân cách, chuẩn bộ mã ký tự và cách xử lý giá trị rỗng.
+
+422
+00:47:48.948 --> 00:47:55.092
+Nếu chỉ nối chuỗi không có độ dài hoặc ký tự phân cách rõ, có thể xuất hiện sự mơ hồ.
+
+423
+00:47:55.292 --> 00:48:03.548
+mã nguồn phải có kiểm thử dãy giá trị cố định: cùng đầu vào luôn ra cùng giá trị băm, thay một trường phải đổi vùng chỉ số,
+
+424
+00:48:03.748 --> 00:48:08.399
+và Java với mọi phần cài đặt thực tế khác phải cho kết quả giống nhau.
+
+425
+00:48:09.099 --> 00:48:13.600
+bảng số nguyên tố trong dữ liệu thử nghiệm chứa năm triệu số nguyên tố.
+
+426
+00:48:13.800 --> 00:48:18.941
+Java không trả trực tiếp số nguyên tố mà trả chỉ số bắt đầu và kết thúc.
+
+427
+00:48:19.141 --> 00:48:26.907
+Đầu tiên tính khoảng chỉ số an toàn bằng N trừ giá trị điểm tối đa sau chuẩn hóa, trừ số lượng điểm, cộng một.
+
+428
+00:48:27.107 --> 00:48:37.667
+Với N bằng năm triệu, điểm tối đa sau chuẩn hóa bằng một trăm và số lượng cột điểm bằng ba, khoảng an toàn giúp chỉ số bắt đầu không chạy vượt cuối bảng.
+
+429
+00:48:37.867 --> 00:48:40.917
+Sau đó K bằng B mô-đun khoảng chỉ số an toàn.
+
+430
+00:48:41.117 --> 00:48:47.048
+chỉ số bắt đầu bằng K cộng một trăm, và chỉ số kết thúc bằng chỉ số bắt đầu cộng hai.
+
+431
+00:48:47.248 --> 00:48:52.091
+máy chủ phía sau truy vấn ba dòng liên tiếp trong dữ liệu số nguyên tố.
+
+432
+00:48:52.291 --> 00:49:00.675
+Việc cộng một trăm đẩy chỉ số qua vùng đầu; do dãy số nguyên tố tăng dần, các số nguyên tố lấy được lớn hơn miền điểm.
+
+433
+00:49:00.875 --> 00:49:07.936
+Hệ thống phải xác nhận truy vấn trả đúng ba số và mỗi số đều là chuỗi số hợp lệ trước khi gửi sang Java.
+
+434
+00:49:08.636 --> 00:49:13.244
+bộ điều khiển dùng N bằng năm triệu để ánh xạ B vào chỉ số hợp lệ.
+
+435
+00:49:13.444 --> 00:49:19.439
+Vì cần ba số nguyên tố liên tiếp, bắt đầu chỉ số phải nằm trong miền còn đủ ba dòng.
+
+436
+00:49:19.639 --> 00:49:28.641
+Một sai khác nhỏ giữa chỉ số bắt đầu từ không hay từ một, hoặc giữa tổng số số nguyên tố thực tế và hằng N, sẽ làm lấy sai bộ mô-đun.
+
+437
+00:49:28.841 --> 00:49:34.857
+Do đó cơ sở dữ liệu khởi tạo phải bảo đảm đủ đúng năm triệu dòng và chỉ số liên tục.
+
+438
+00:49:35.057 --> 00:49:45.255
+địa chỉ xử lý vùng số nguyên tố nên trả bắt đầu, kết thúc, đếm và phiên bản; máy chủ phía sau phải kiểm tra kết thúc trừ bắt đầu cộng một bằng ba.
+
+439
+00:49:45.455 --> 00:49:51.535
+truy vấn dữ liệu số nguyên tố phải sắp xếp theo mã định danh, không dựa vào thứ tự vật lý.
+
+440
+00:49:51.735 --> 00:49:57.580
+kiểm thử dãy giá trị cần cố định bí mật dùng chung và ngữ cảnh để xác minh vùng chỉ số.
+
+441
+00:49:57.780 --> 00:50:08.020
+Nếu thay số lượng số nguyên tố hoặc thuật toán giá trị băm, phiên bản thuật toán phải đổi và dữ liệu cũ vẫn cần điều phối theo phiên bản về công thức cũ.
+
+442
+00:50:08.220 --> 00:50:15.388
+Đây là lý do lưu phiên bản không chỉ để hiển thị; mã nguồn phải thật sự chọn phần cài đặt thực tế theo phiên bản.
+
+443
+00:50:16.088 --> 00:50:24.003
+Một phép đo hiệu năng tĩnh được thực hiện theo đúng cấu trúc mã nguồn với mẫu tổng hợp, không phải hồ sơ sinh viên thật.
+
+444
+00:50:24.203 --> 00:50:36.363
+Giá trị C là một số nguyên rất lớn ở dạng chuỗi trên màn hình, bắt đầu mã định danh thật của mẫu là bốn triệu và ba điểm chuẩn hóa là bảy mươi lăm, tám mươi lăm, tám mươi mốt.
+
+445
+00:50:36.563 --> 00:50:46.461
+Sau khi đọc năm triệu số nguyên tố, chương trình thử từng bộ ba liên tiếp và chỉ giữ vị trí mà cả ba phần dư của C nằm trong miền không đến một trăm.
+
+446
+00:50:46.661 --> 00:50:57.605
+Phần thử toàn bộ mất khoảng không phẩy ba hai năm giây trên môi trường kiểm tra và tìm được đúng bộ ba cùng ba điểm, không cần mã số cá nhân hoặc bí mật dùng chung.
+
+447
+00:50:57.805 --> 00:51:08.173
+Thời gian có thể thay đổi theo máy, nhưng kết luận cấu trúc không đổi: không gian năm triệu vị trí là hữu hạn và điều kiện miền điểm tạo kênh dò suy rất mạnh.
+
+448
+00:51:08.373 --> 00:51:16.352
+phép đo hiệu năng này chứng minh vì sao định lý số dư Trung Hoa hiện tại không đủ bảo vệ cơ sở dữ liệu bản sao dữ liệu.
+
+449
+00:51:16.552 --> 00:51:23.485
+Nên đưa số liệu cùng mã nguồn phép đo hiệu năng và môi trường máy vào phụ lục nếu dùng trong báo cáo.
+
+450
+00:51:24.185 --> 00:51:28.537
+bộ điều khiển dịch vụ Java công bố bốn địa chỉ xử lý nội bộ.
+
+451
+00:51:28.737 --> 00:51:33.857
+Chức năng tạo khóa công khai nhận mã số cá nhân và trả khóa công khai mô phỏng.
+
+452
+00:51:34.057 --> 00:51:44.063
+Chức năng xác định vùng số nguyên tố nhận mã khoa, mã lớp, mã số sinh viên, mã học phần, mã số cá nhân và khóa công khai của phía đối diện,
+
+453
+00:51:44.263 --> 00:51:47.463
+rồi trả chỉ số bắt đầu và chỉ số kết thúc.
+
+454
+00:51:47.663 --> 00:51:53.956
+mã hóa nhận danh sách điểm chuẩn hóa cùng danh sách số nguyên tố và trả C dưới dạng chuỗi.
+
+455
+00:51:54.156 --> 00:51:59.596
+giải mã nhận C và danh sách số nguyên tố rồi trả dữ liệu rõ gồm ba số nguyên.
+
+456
+00:51:59.796 --> 00:52:09.417
+dịch vụ tính toán định lý số dư Trung Hoa bằng Java thực hiện cơ chế trao đổi khóa mô phỏng mô phỏng, thuật toán băm hai trăm năm mươi sáu bit,
+
+457
+00:52:09.617 --> 00:52:14.311
+định lý số dư Trung Hoa bằng kiểu số nguyên lớn và kiểm tra đầu vào.
+
+458
+00:52:14.511 --> 00:52:20.377
+Java không biết mật khẩu máy chủ cơ sở dữ liệu và không truy vấn dữ liệu số nguyên tố.
+
+459
+00:52:20.577 --> 00:52:25.356
+môi trường máy chủ mới là thành phần lấy số nguyên tố từ cơ sở dữ liệu.
+
+460
+00:52:25.556 --> 00:52:35.519
+Cách tách này tạo ranh giới rõ: Java là dịch vụ tính toán, còn máy chủ phía sau chịu trách nhiệm xác thực, nghiệp vụ và quyền truy cập dữ liệu.
+
+461
+00:52:35.719 --> 00:52:45.425
+Trong triển khai thực tế, các địa chỉ xử lý nội bộ cũng cần mạng riêng, xác thực giữa dịch vụ, quá thời gian chờ và kiểm tra tình trạng dịch vụ.
+
+462
+00:52:46.125 --> 00:52:50.072
+môi trường máy chủ và Java tạo thành một giao thức nội bộ.
+
+463
+00:52:50.272 --> 00:52:57.077
+Với vùng số nguyên tố, yêu cầu phải chứa dữ liệu đủ để Java tính bí mật dùng chung và ngữ cảnh.
+
+464
+00:52:57.277 --> 00:53:02.440
+mã hóa nhận ba số chuẩn hóa và ba số nguyên tố dưới dạng chuỗi, trả C.
+
+465
+00:53:02.640 --> 00:53:06.437
+giải mã nhận C và ba số nguyên tố, trả ba phần dư.
+
+466
+00:53:06.637 --> 00:53:12.184
+môi trường máy chủ không được tin phản hồi chỉ vì giao thức truyền dữ liệu hai trăm.
+
+467
+00:53:12.384 --> 00:53:21.408
+Nó phải xác minh trường tồn tại, chuỗi là số, mảng đúng ba phần tử, số nguyên tố lớn hơn điểm và kết quả giải mã nằm trong miền.
+
+468
+00:53:21.608 --> 00:53:28.008
+Cần quá thời gian chờ rõ, giới hạn thử lại và phân biệt lỗi phía người dùng với lỗi dịch vụ.
+
+469
+00:53:28.208 --> 00:53:37.509
+Java hiện có nhánh lỗi trả lại toàn bộ phần thân yêu cầu trong phản hồi, có thể làm lộ mã số cá nhân, khóa công khai hoặc dữ liệu rõ.
+
+470
+00:53:37.709 --> 00:53:46.157
+môi trường vận hành thực tế nên trả mã lỗi và mối liên hệ mã định danh, còn chi tiết ghi vào nhật ký đã che dữ liệu nhạy cảm.
+
+471
+00:53:46.357 --> 00:53:53.909
+giao diện lập trình ứng dụng nội bộ cũng cần tính xác thực, mạng nội bộ chính sách và lược đồ dữ liệu phiên bản.
+
+472
+00:53:54.109 --> 00:54:01.448
+quy ước giao tiếp kiểm thử phải chạy cả hai dịch vụ để phát hiện đổi tên trường, thay kiểu số hoặc chỉ số.
+
+473
+00:54:02.148 --> 00:54:10.809
+Với mỗi dòng hợp lệ trong danh sách bảng tính, máy chủ phía sau lấy thông tin sinh viên, lớp, khoa, học phần và giảng viên.
+
+474
+00:54:11.009 --> 00:54:13.911
+Ba điểm được chuẩn hóa thành mảng số nguyên.
+
+475
+00:54:14.111 --> 00:54:21.599
+máy chủ phía sau gọi Chức năng xác định vùng số nguyên tố bằng mã số cá nhân giảng viên và khóa công khai sinh viên.
+
+476
+00:54:21.799 --> 00:54:30.823
+Sau khi nhận chỉ số, máy chủ phía sau truy vấn dữ liệu số nguyên tố và gửi ba số nguyên tố cùng mảng điểm sang địa chỉ xử lý mã hóa.
+
+477
+00:54:31.023 --> 00:54:33.241
+Java trả C dưới dạng chuỗi.
+
+478
+00:54:33.441 --> 00:54:43.383
+máy chủ phía sau lưu hoặc cập nhật bản ghi theo cặp mã sinh viên và mã học phần, đồng thời lưu mã giảng viên và ngữ cảnh định lý số dư Trung Hoa.
+
+479
+00:54:43.583 --> 00:54:47.615
+Điểm rõ không được ghi vào bảng điểm định lý số dư Trung Hoa.
+
+480
+00:54:47.815 --> 00:54:56.284
+Tuy nhiên trong quá trình xử lý, dữ liệu rõ vẫn tồn tại tạm thời ở giao diện phía trước, yêu cầu và bộ nhớ máy chủ phía sau.
+
+481
+00:54:56.484 --> 00:55:02.692
+Vì vậy không được ghi toàn bộ phần thân yêu cầu, mã số cá nhân hoặc mảng điểm vào nhật ký.
+
+482
+00:55:02.892 --> 00:55:14.028
+Khi trình bày, câu đúng là không lưu trực tiếp điểm thật trong bảng điểm mã hóa theo định lý số dư Trung Hoa, chứ không phải điểm thật không bao giờ xuất hiện trong hệ thống.
+
+483
+00:55:14.728 --> 00:55:18.099
+theo dõi một dòng giúp thấy nơi nào có thể thất bại.
+
+484
+00:55:18.299 --> 00:55:21.840
+máy chủ phía sau nhận mã số sinh viên và ba điểm.
+
+485
+00:55:22.040 --> 00:55:28.931
+Nó dùng phiên đăng nhập để xác định giảng viên, truy vấn học phần theo năm kỳ và kiểm tra quyền sở hữu.
+
+486
+00:55:29.131 --> 00:55:31.840
+mã số cá nhân được so với giá trị băm.
+
+487
+00:55:32.040 --> 00:55:35.923
+Sau đó lấy sinh viên, lớp, khoa và khóa công khai.
+
+488
+00:55:36.123 --> 00:55:38.832
+Điểm được chuẩn hóa thành ba số nguyên.
+
+489
+00:55:39.032 --> 00:55:47.203
+máy chủ phía sau gọi Java lấy vùng chỉ số, truy vấn đúng ba số nguyên tố từ dữ liệu số nguyên tố, rồi gọi mã hóa.
+
+490
+00:55:47.403 --> 00:55:50.944
+Java tính M, từng M i, nghịch đảo y i và C.
+
+491
+00:55:51.144 --> 00:56:00.083
+máy chủ phía sau nhận C dạng chuỗi, chuẩn bị bản chụp ngữ cảnh và thực hiện thêm mới hoặc cập nhật bảng điểm định lý số dư Trung Hoa.
+
+492
+00:56:00.283 --> 00:56:02.139
+Mỗi bước cần lỗi xử lý.
+
+493
+00:56:02.339 --> 00:56:06.584
+Nếu thiếu khóa công khai, không được tự dùng giá trị mặc định.
+
+494
+00:56:06.784 --> 00:56:10.155
+Nếu lấy hai hoặc bốn số nguyên tố, phải dừng.
+
+495
+00:56:10.355 --> 00:56:17.437
+Nếu Java trả C nhưng hệ quản trị cơ sở dữ liệu thất bại, bản ghi không tồn tại; yêu cầu có thể thử lại.
+
+496
+00:56:17.637 --> 00:56:25.872
+Nếu hệ quản trị cơ sở dữ liệu thành công nhưng phản hồi về phía người dùng bị mất, thử lại phải có thể chạy lặp lại an toàn.
+
+497
+00:56:26.072 --> 00:56:30.829
+Gắn mã định danh yêu cầu và lô dữ liệu mã định danh sẽ giúp điều tra.
+
+498
+00:56:31.029 --> 00:56:37.536
+bài giảng phần trình diễn chỉ cho thấy đầu và cuối; theo dõi mã nguồn cho thấy toàn bộ đường đi thật.
+
+499
+00:56:38.236 --> 00:56:41.777
+Khi phần trình diễn, đây là màn hình cần phóng đến.
+
+500
+00:56:41.977 --> 00:56:47.673
+Truy vấn bảng điểm định lý số dư Trung Hoa theo đúng mã số sinh viên và mã học phần.
+
+501
+00:56:47.873 --> 00:56:55.425
+Người xem phải thấy mã sinh viên, mã học phần, mã giảng viên, C, các trường ngữ cảnh và thời gian cập nhật.
+
+502
+00:56:55.625 --> 00:57:03.604
+C được lưu dưới dạng chuỗi văn bản độ dài lớn vì kết quả kiểu số nguyên lớn có thể vượt giới hạn kiểu số nguyên lớn.
+
+503
+00:57:03.804 --> 00:57:09.393
+Bảng trọng tâm không chứa ba cột điểm giữa kỳ, điểm cuối kỳ và điểm trung bình.
+
+504
+00:57:09.593 --> 00:57:20.516
+chỉ số bắt đầu, chỉ số kết thúc và danh sách số nguyên tố cũng không được lưu; chúng được tính lại trong bộ nhớ khi mã hóa, giải mã hoặc đổi mã số cá nhân.
+
+505
+00:57:20.716 --> 00:57:27.713
+Nếu muốn chứng minh mạnh hơn, hãy ghi lại C trước khi đổi mã số cá nhân, thực hiện đổi mã số cá nhân,
+
+506
+00:57:27.913 --> 00:57:33.225
+rồi truy vấn lại để cho thấy C mới khác C cũ nhưng điểm giải mã vẫn giữ nguyên.
+
+507
+00:57:33.425 --> 00:57:38.332
+Đây là bằng chứng trực quan tốt hơn nhiều so với chỉ nói thuật toán đã chạy.
+
+508
+00:57:39.032 --> 00:57:45.987
+thêm mới hoặc cập nhật tiện cho việc nhập dữ liệu lại, nhưng điều kiện khớp phải phản ánh đúng danh tính.
+
+509
+00:57:46.187 --> 00:57:53.013
+Với khóa mã sinh viên và mã học phần, nhập dữ liệu cùng môn ở kỳ khác có thể cập nhật bản ghi cũ.
+
+510
+00:57:53.213 --> 00:57:57.907
+khóa phiên bản và mốc thời gian thay đổi nhưng lịch sử trước đó mất.
+
+511
+00:57:58.107 --> 00:58:06.192
+Ngay cả trong cùng kỳ, hai giảng viên hoặc hai thẻ trang nhập dữ liệu đồng thời có thể ghi đè theo lần ghi cuối cùng thắng.
+
+512
+00:58:06.392 --> 00:58:13.581
+Cần bộ khóa thời gian hoặc điểm lần học mã định danh, cộng dòng phiên bản để lạc quan xử lý đồng thời.
+
+513
+00:58:13.781 --> 00:58:18.091
+Trước cập nhật, máy chủ phía sau có thể so mong đợi phiên bản.
+
+514
+00:58:18.291 --> 00:58:29.683
+kiểm toán nhật ký phải ghi cũ C giá trị băm, mới C giá trị băm, người thao tác, lô dữ liệu mã định danh và lý do, nhưng không ghi dữ liệu rõ hoặc mã số cá nhân.
+
+515
+00:58:29.883 --> 00:58:36.261
+Nếu chính sách cho phép sửa điểm, nên có quy trình phê duyệt hoặc ít nhất giữ lịch sử bất biến.
+
+516
+00:58:36.461 --> 00:58:42.691
+Một hệ thống điểm không chỉ cần che nội dung; nó cần chứng minh ai thay đổi điểm vào lúc nào.
+
+517
+00:58:43.391 --> 00:58:48.852
+Khi sinh viên xem điểm, giao diện phía trước gửi mã học phần và mã số cá nhân.
+
+518
+00:58:49.052 --> 00:58:57.564
+máy chủ phía sau phải lấy mã số sinh viên từ phiên đăng nhập hiện tại để tránh người dùng tự thay mã số sinh viên trong yêu cầu.
+
+519
+00:58:57.764 --> 00:59:07.684
+Sau khi xác thực giá trị băm của mã số cá nhân, máy chủ phía sau tìm bản ghi bảng điểm định lý số dư Trung Hoa theo mã số sinh viên và mã học phần.
+
+520
+00:59:07.884 --> 00:59:14.732
+Nếu có, máy chủ phía sau lấy C và mã giảng viên, rồi lấy khóa công khai hiện tại của giảng viên.
+
+521
+00:59:14.932 --> 00:59:22.100
+Java Chức năng xác định vùng số nguyên tố được gọi bằng mã số cá nhân sinh viên và khóa công khai giảng viên.
+
+522
+00:59:22.300 --> 00:59:32.924
+Nhờ tính chất cơ chế trao đổi khóa mô phỏng mô phỏng, bí mật dùng chung trùng với lúc giảng viên mã hóa bằng mã số cá nhân giảng viên và khóa công khai sinh viên.
+
+523
+00:59:33.124 --> 00:59:45.049
+máy chủ phía sau lấy đúng ba số nguyên tố, gọi giải mã, kiểm tra dữ liệu rõ có đủ ba số trong miền không đến một trăm, chia mười và trả điểm giữa kỳ, điểm cuối kỳ,
+
+524
+00:59:45.249 --> 00:59:47.937
+điểm trung bình về giao diện phía trước.
+
+525
+00:59:48.137 --> 00:59:53.876
+Người dùng chỉ thấy thao tác quen thuộc; toàn bộ định lý số dư Trung Hoa nằm phía sau.
+
+526
+00:59:54.576 --> 01:00:01.744
+giao diện phía trước thông thường gửi mã số cá nhân, mã môn, năm và kỳ; nó không gửi mã số sinh viên.
+
+527
+01:00:01.944 --> 01:00:15.320
+máy chủ phía sau phải lấy mã số sinh viên từ phiên đăng nhập, đọc C cùng mã giảng viên, lấy khóa công khai giảng viên và bản chụp ngữ cảnh sinh viên, tái lập bí mật dùng chung theo chiều sinh viên,
+
+528
+01:00:15.520 --> 01:00:18.229
+lấy ba số nguyên tố rồi gọi giải mã.
+
+529
+01:00:18.429 --> 01:00:23.187
+Java trả ba số nguyên; máy chủ phía sau kiểm tra miền và chia mười.
+
+530
+01:00:23.387 --> 01:00:30.917
+Điểm tin cậy sai nằm ở việc địa chỉ xử lý còn cho phần thân yêu cầu mã số sinh viên ưu tiên hơn phiên đăng nhập.
+
+531
+01:00:31.117 --> 01:00:36.792
+Vì giao diện không dùng trường đó, kiểm thử thao tác bấm xuyên suốt không phát hiện.
+
+532
+01:00:36.992 --> 01:00:46.165
+kiểm thử giao diện lập trình ứng dụng phải đăng nhập sinh viên A, gửi mã số sinh viên của B và chờ giao thức truyền dữ liệu bốn trăm lẻ ba.
+
+533
+01:00:46.365 --> 01:00:56.413
+Ngoài ra cần chống rò rỉ qua thời gian xử lý khi mã số cá nhân sai, giới hạn tần suất và không phân biệt quá chi tiết bản ghi tồn tại hay không.
+
+534
+01:00:56.613 --> 01:01:04.443
+phản hồi chỉ nên chứa điểm cần hiển thị, không chứa các số nguyên tố, C, khóa công khai hoặc ngăn xếp theo dõi.
+
+535
+01:01:05.143 --> 01:01:08.215
+Luồng giải mã cần phân biệt rõ các trường hợp.
+
+536
+01:01:08.415 --> 01:01:14.516
+Nếu sinh viên nhập sai mã số cá nhân, hệ thống dừng và trả thông báo sai mã số cá nhân.
+
+537
+01:01:14.716 --> 01:01:25.575
+Nếu mã số cá nhân đúng nhưng bảng điểm định lý số dư Trung Hoa chưa có bản ghi, thông báo nên là chưa có điểm cho môn học này, không phải lỗi kỹ thuật khó hiểu.
+
+538
+01:01:25.775 --> 01:01:37.572
+Nếu thiếu khóa công khai giảng viên, không lấy đủ ba số nguyên tố hoặc Java trả dữ liệu rõ sai kích thước, máy chủ phía sau phải từ chối và không hiển thị giá trị ngẫu nhiên.
+
+539
+01:01:37.772 --> 01:01:46.924
+Thông báo gửi cho người dùng cần ngắn gọn, trong khi nhật ký máy chủ có thể ghi mã lỗi và mã định danh yêu cầu nhưng không ghi mã số cá nhân,
+
+540
+01:01:47.124 --> 01:01:50.964
+C kèm toàn bộ ngữ cảnh bí mật hoặc dữ liệu rõ điểm.
+
+541
+01:01:51.164 --> 01:01:58.695
+Ngoài ra nên giới hạn số lần thử mã số cá nhân, khóa tạm thời sau nhiều lần sai và ghi nhận sự kiện bất thường.
+
+542
+01:01:58.895 --> 01:02:04.015
+Đây là các lớp bảo vệ bổ sung mà định lý số dư Trung Hoa không tự cung cấp.
+
+543
+01:02:04.715 --> 01:02:10.432
+Giả sử kẻ tấn công có quyền cập nhật cơ sở dữ liệu nhưng không biết mã số cá nhân.
+
+544
+01:02:10.632 --> 01:02:12.915
+Họ có thể thay C bằng một số khác.
+
+545
+01:02:13.115 --> 01:02:20.347
+Khi người dùng hợp lệ xem điểm, máy chủ phía sau tái lập đúng bộ số nguyên tố và Java vẫn tính phần dư.
+
+546
+01:02:20.547 --> 01:02:27.245
+Nếu các phần dư nằm trong miền, hệ thống hiển thị điểm mới mà không có tín hiệu C đã bị giả mạo.
+
+547
+01:02:27.445 --> 01:02:32.715
+Không có thẻ để xác minh dữ liệu được tạo bởi bên có khóa và không bị thay đổi.
+
+548
+01:02:32.915 --> 01:02:41.747
+Tương tự, có thể tráo C giữa các bản ghi nếu ngẫu nhiên dữ liệu mô tả và số nguyên tố cho kết quả hợp lệ, hoặc hoàn tác C cũ.
+
+549
+01:02:41.947 --> 01:02:47.771
+Cách bảo vệ là mã hóa kèm xác thực, trong đó mã hóa tạo bản mã và thẻ xác thực.
+
+550
+01:02:47.971 --> 01:02:55.309
+dữ liệu liên kết ràng buộc mã số sinh viên, mã học phần, năm, kỳ, phiên bản và quyền sở hữu.
+
+551
+01:02:55.509 --> 01:03:00.331
+Khi bất kỳ bit hoặc dữ liệu mô tả thay đổi, giải mã phải thất bại.
+
+552
+01:03:00.531 --> 01:03:07.101
+Đây là khoảng cách lớn nhất giữa biểu diễn dữ liệu định lý số dư Trung Hoa và mã hóa đã xác thực.
+
+553
+01:03:07.801 --> 01:03:16.185
+mã số cá nhân tham gia vào bí mật dùng chung và vùng số nguyên tố, vì vậy đổi mã số cá nhân làm thay đổi bộ số nguyên tố.
+
+554
+01:03:16.385 --> 01:03:25.985
+Nếu hệ thống chỉ cập nhật giá trị băm của mã số cá nhân, các bản ghi C cũ vẫn gắn với số nguyên tố cũ và người dùng sẽ không khôi phục đúng điểm.
+
+555
+01:03:26.185 --> 01:03:28.468
+Quy trình đúng gồm bốn giai đoạn.
+
+556
+01:03:28.668 --> 01:03:35.751
+Một, xác thực mã số cá nhân hiện tại và lấy toàn bộ bản ghi bảng điểm định lý số dư Trung Hoa liên quan.
+
+557
+01:03:35.951 --> 01:03:42.073
+Hai, với từng bản ghi, tái lập vùng chỉ số cũ và giải mã C cũ thành ba số chuẩn hóa.
+
+558
+01:03:42.273 --> 01:03:48.524
+Ba, tạo khóa công khai mới, tính vùng chỉ số mới và mã hóa dữ liệu rõ thành C mới.
+
+559
+01:03:48.724 --> 01:03:55.465
+Bốn, giải mã thử C mới bằng số nguyên tố mới và so sánh chính xác với dữ liệu rõ trước khi ghi.
+
+560
+01:03:55.665 --> 01:04:00.444
+Khi sinh viên đổi mã số cá nhân, mọi bản ghi của sinh viên được xử lý.
+
+561
+01:04:00.644 --> 01:04:06.255
+Khi giảng viên đổi mã số cá nhân, mọi bản ghi do giảng viên đó phụ trách được xử lý.
+
+562
+01:04:06.455 --> 01:04:11.724
+bài giảng phần trình diễn nên chứng minh C cũ khác C mới trong khi điểm không đổi.
+
+563
+01:04:12.424 --> 01:04:19.784
+Đổi mã số cá nhân ảnh hưởng khóa công khai, bí mật dùng chung, vùng số nguyên tố và mọi C liên quan.
+
+564
+01:04:19.984 --> 01:04:25.595
+Quy trình an toàn bắt đầu bằng việc khóa hoặc bản chụp ngữ cảnh các bản ghi cần đổi.
+
+565
+01:04:25.795 --> 01:04:31.427
+Với khóa cũ, hệ thống tái lập vùng chỉ số và giải mã C thành ba điểm chuẩn hóa.
+
+566
+01:04:31.627 --> 01:04:36.448
+Kết quả phải qua kiểm tra miền và có thể kiểm tra mã hóa rồi giải mã.
+
+567
+01:04:36.648 --> 01:04:41.085
+Sau đó tạo khóa công khai mới, vùng chỉ số mới và C mới.
+
+568
+01:04:41.285 --> 01:04:52.485
+Chỉ khi tất cả bản ghi đã chuẩn bị thành công mới mở giao dịch cập nhật giá trị băm của mã số cá nhân, khóa công khai, C, bản chụp ngữ cảnh khóa và tăng khóa phiên bản.
+
+569
+01:04:52.685 --> 01:04:57.251
+Nếu bất kỳ bước nào lỗi, hoàn tác phải giữ toàn bộ trạng thái cũ.
+
+570
+01:04:57.451 --> 01:05:03.851
+mã nguồn có nhiều bảo vệ tốt: dòng khóa dữ liệu, so sánh cũ C, đọc lại và hoàn tác.
+
+571
+01:05:04.051 --> 01:05:06.824
+Đây là phần mạnh của phần cài đặt thực tế.
+
+572
+01:05:07.024 --> 01:05:11.419
+Tuy nhiên giao dịch dài có thể khóa nhiều dòng và phụ thuộc Java.
+
+573
+01:05:11.619 --> 01:05:23.395
+Thiết kế môi trường vận hành thực tế nên tách chuẩn bị ngoài giao dịch, lưu đã mã hóa tác vụ nền trạng thái an toàn, rồi xác nhận giao dịch ngắn với kiểm tra phiên bản lạc quan.
+
+574
+01:05:24.095 --> 01:05:32.628
+Mã hóa lại nhiều bản ghi có thể mất thời gian, nên mã nguồn tổ chức thành tác vụ nền và giao diện phía trước định kỳ hỏi trạng thái.
+
+575
+01:05:32.828 --> 01:05:36.903
+Tuy nhiên tính nhất quán vẫn phải được bảo đảm bằng giao dịch.
+
+576
+01:05:37.103 --> 01:05:49.071
+máy chủ phía sau chuẩn bị kết quả mới trong bộ nhớ, giải mã thử để xác nhận, sau đó mở giao dịch, khóa từng dòng hoặc dùng điều kiện kiểm tra C cũ chưa bị phiên khác thay đổi.
+
+577
+01:05:49.271 --> 01:06:00.812
+Chỉ khi toàn bộ bản ghi cập nhật thành công, hệ thống mới cập nhật giá trị băm của mã số cá nhân, khóa công khai, khóa phiên bản, thời gian đổi mã số cá nhân và lịch sử.
+
+578
+01:06:01.012 --> 01:06:07.135
+Nếu bất kỳ bản ghi nào thất bại, giao dịch hoàn tác, giữ nguyên mã số cá nhân và C cũ.
+
+579
+01:06:07.335 --> 01:06:14.204
+Cách này tránh trạng thái một phần môn học dùng mã số cá nhân cũ, phần còn lại dùng mã số cá nhân mới.
+
+580
+01:06:14.404 --> 01:06:20.825
+Hướng môi trường vận hành thực tế cần đưa tác vụ nền và trạng thái ra hàng đợi hoặc kho bền vững,
+
+581
+01:06:21.025 --> 01:06:28.492
+vì lưu tác vụ nền trong bộ nhớ tạm có thể mất khi tiến trình khởi động lại hoặc khi chạy nhiều bản chạy song song.
+
+582
+01:06:29.192 --> 01:06:40.051
+Các xung đột đồng thời quan trọng gồm giảng viên nhập dữ liệu trong lúc sinh viên đổi mã số cá nhân, giảng viên đổi mã số cá nhân khi một lô dữ liệu đang mã hóa,
+
+583
+01:06:40.251 --> 01:06:43.600
+và hai yêu cầu đổi mã số cá nhân chạy đồng thời.
+
+584
+01:06:43.800 --> 01:06:51.949
+mã nguồn dùng khóa dòng khi cập nhật và so sánh cũ C trước cập nhật, giúp phát hiện bản ghi đã thay đổi từ lúc chuẩn bị.
+
+585
+01:06:52.149 --> 01:06:55.349
+Nếu khác, giao dịch hoàn tác thay vì ghi đè.
+
+586
+01:06:55.549 --> 01:07:02.568
+Tuy nhiên tác vụ nền trạng thái nằm trong bộ nhớ môi trường máy chủ; khởi động lại có thể làm mất tiến trình.
+
+587
+01:07:02.768 --> 01:07:06.736
+Nhiều bản chạy song song cần khóa phân tán hoặc hàng đợi.
+
+588
+01:07:06.936 --> 01:07:13.784
+Mỗi tài khoản nên có một khóa dữ liệu khóa, tác vụ nền có mã định danh và trạng thái đã lưu bền vững.
+
+589
+01:07:13.984 --> 01:07:24.373
+kiểm thử xử lý đồng thời cần hàng rào đồng bộ để dừng chính xác giữa chuẩn bị và xác nhận giao dịch, sau đó khởi chạy nhập dữ liệu hoặc tác vụ nền thứ hai.
+
+590
+01:07:24.573 --> 01:07:33.469
+Kết quả chấp nhận được là một bên thành công và bên kia thử lại hoặc hoàn tác; không được tồn tại mã số cá nhân mới với C cũ,
+
+591
+01:07:33.669 --> 01:07:38.427
+khóa công khai cũ với C mới hoặc một phần bản ghi dùng phiên bản khác.
+
+592
+01:07:39.127 --> 01:07:48.343
+tập lệnh nạp dữ liệu khởi tạo lịch sử tạo điểm bằng hàm sinh điểm xác định, lấy ngữ cảnh năm kỳ và mã hóa qua định lý số dư Trung Hoa.
+
+593
+01:07:48.543 --> 01:07:55.305
+Điều này làm dữ liệu phần trình diễn tái lập được nhưng không phải dữ liệu tập dữ liệu nghiên cứu thật.
+
+594
+01:07:55.505 --> 01:08:03.868
+tập lệnh thêm dữ liệu các cột năm và học kỳ, trong khi khóa chính bảng điểm định lý số dư Trung Hoa vẫn thiếu hai chiều này.
+
+595
+01:08:04.068 --> 01:08:11.193
+Nếu cùng mã sinh viên và mã học phần xuất hiện nhiều năm, có thể xung đột hoặc cập nhật ngoài ý muốn.
+
+596
+01:08:11.393 --> 01:08:23.447
+Điểm tốt là lỗi từng dòng được đếm và tiến trình trả mã thoát mã nguồn hai khi có lỗi, nên hệ thống đóng gói dịch vụ cấu hình dịch vụ không nên mở máy chủ phía sau như thể nạp dữ
+
+597
+01:08:23.647 --> 01:08:25.652
+liệu khởi tạo đã thành công.
+
+598
+01:08:25.852 --> 01:08:29.329
+Nhưng việc đếm lỗi không sửa được lược đồ dữ liệu.
+
+599
+01:08:29.529 --> 01:08:42.969
+Cần chuyển đổi dữ liệu khóa trước khi nạp dữ liệu khởi tạo, xóa nhanh nội dung bảng có chủ đích, khả năng chạy lặp lại an toàn và bản tóm tắt gồm số mong đợi, đã thêm, đã cập nhật, đã bỏ qua,
+
+600
+01:08:43.169 --> 01:08:43.980
+thất bại.
+
+601
+01:08:44.180 --> 01:08:49.236
+Dữ liệu mẫu cũng phải ghi nhãn rõ để không bị hiểu là điểm sinh viên thật.
+
+602
+01:08:49.936 --> 01:08:54.267
+Hệ thống đã có lịch sử đăng nhập và lịch sử đổi mã số cá nhân.
+
+603
+01:08:54.467 --> 01:09:02.104
+Sau đăng nhập thành công, máy chủ phía sau ghi tài khoản, thời gian, địa chỉ mạng và vị trí tương đối nếu có.
+
+604
+01:09:02.304 --> 01:09:08.213
+Lịch sử đổi mã số cá nhân chỉ nên được ghi khi toàn bộ quá trình mã hóa lại hoàn tất.
+
+605
+01:09:08.413 --> 01:09:18.120
+Để vận hành tốt hơn, có thể thêm kiểm toán cho nhập điểm, cập nhật điểm, yêu cầu giải mã, lỗi dịch vụ Java và thay đổi phiên bản khóa.
+
+606
+01:09:18.320 --> 01:09:20.859
+Nhưng nhật ký phải được lọc dữ liệu.
+
+607
+01:09:21.059 --> 01:09:29.805
+Không được bảng ghi nhật ký toàn bộ phần thân yêu cầu của địa chỉ xử lý nhập điểm vì phần thân yêu cầu chứa mã số cá nhân và điểm rõ.
+
+608
+01:09:30.005 --> 01:09:35.445
+Không nên ghi bí mật dùng chung, ba số nguyên tố hoặc dữ liệu rõ sau giải mã.
+
+609
+01:09:35.645 --> 01:09:45.395
+nhật ký phù hợp gồm mã định danh yêu cầu, tài khoản, vai trò, mã học phần, số lượng bản ghi, trạng thái, thời gian xử lý và mã lỗi.
+
+610
+01:09:45.595 --> 01:09:49.989
+Đây là nguyên tắc rất quan trọng khi đề tài mang chủ đề bảo mật.
+
+611
+01:09:50.689 --> 01:09:54.593
+ghi nhật ký hiện có thể phá vỡ bảo mật dù thuật toán đúng.
+
+612
+01:09:54.793 --> 01:10:05.012
+địa chỉ xử lý nhập điểm nhật ký toàn bộ phần thân yêu cầu và phiên đăng nhập, nên mã số cá nhân, điểm và thông tin phiên có thể xuất hiện trong bảng ghi,
+
+613
+01:10:05.212 --> 01:10:09.777
+hệ thống đóng gói dịch vụ nhật ký hoặc hệ thống theo dõi hiệu năng.
+
+614
+01:10:09.977 --> 01:10:13.305
+Một số phản hồi gỡ lỗi trả dữ liệu rõ cùng C.
+
+615
+01:10:13.505 --> 01:10:17.623
+Java lỗi còn đưa toàn bộ phần thân yêu cầu trở lại phản hồi.
+
+616
+01:10:17.823 --> 01:10:24.905
+Khi lỗi xảy ra, dữ liệu nhạy cảm dễ bị lưu lâu hơn cơ sở dữ liệu chính và có phạm vi truy cập rộng hơn.
+
+617
+01:10:25.105 --> 01:10:26.748
+Cần hai loại nhật ký.
+
+618
+01:10:26.948 --> 01:10:34.863
+vận hành nhật ký chứa mã định danh yêu cầu, địa chỉ xử lý, thời gian, trạng thái và mã lỗi, không chứa bí mật.
+
+619
+01:10:35.063 --> 01:10:45.217
+kiểm toán nhật ký ghi người thực hiện, đối tượng, hành động, cũ giá trị băm, mới giá trị băm và kết quả; nên ghi nối tiếp chỉ và bảo vệ quyền.
+
+620
+01:10:45.417 --> 01:10:57.684
+che dữ liệu nhạy cảm phải mặc định che mật khẩu, mã số cá nhân, tệp nhận dạng phiên, phân quyền, các số nguyên tố nếu coi nhạy cảm, dữ liệu rõ danh sách điểm và phiên đăng nhập.
+
+621
+01:10:57.884 --> 01:11:02.471
+lỗi phản hồi cho phía người dùng chỉ có mã ổn định và thông báo chung.
+
+622
+01:11:03.171 --> 01:11:07.715
+dịch vụ Java là quan hệ phụ thuộc đồng bộ của ba luồng cốt lõi.
+
+623
+01:11:07.915 --> 01:11:15.232
+Nếu dịch vụ dừng hoặc quá thời gian chờ, người dùng không nhập điểm, xem điểm hoặc đổi mã số cá nhân.
+
+624
+01:11:15.432 --> 01:11:22.920
+môi trường máy chủ không có phương án dự phòng vì không nên tự tính bằng một phần cài đặt thực tế khác thiếu kiểm soát.
+
+625
+01:11:23.120 --> 01:11:30.715
+phiên đăng nhập mặc định trong bộ nhớ khiến khởi động lại đăng xuất toàn bộ người dùng và không mở rộng theo chiều ngang.
+
+626
+01:11:30.915 --> 01:11:35.416
+tác vụ nền đổi mã số cá nhân trong bộ nhớ tạm có thể mất trạng thái.
+
+627
+01:11:35.616 --> 01:11:46.432
+Cần kiểm tra tình trạng dịch vụ, quá thời gian chờ ngắn, thử lại có giới hạn cho thao tác có thể chạy lặp lại an toàn, cơ chế ngắt mạch và thông báo bảo trì rõ.
+
+628
+01:11:46.632 --> 01:11:50.173
+Các tác vụ nền dài nên chạy qua hàng đợi bền vững.
+
+629
+01:11:50.373 --> 01:12:02.192
+cơ sở dữ liệu cần sao lưu và khôi phục kiểm thử; bảng số nguyên tố có thể tái tạo nhưng bảng điểm định lý số dư Trung Hoa, thông tin xác thực và kiểm toán cần điểm khôi phục.
+
+630
+01:12:02.392 --> 01:12:06.104
+khả năng sẵn sàng không có nghĩa cố trả điểm bằng mọi giá.
+
+631
+01:12:06.304 --> 01:12:13.749
+Khi không xác minh được tính đúng đắn, hệ thống phải từ chối an toàn khi có lỗi và không lưu trạng thái nửa chừng.
+
+632
+01:12:14.449 --> 01:12:20.508
+Một bài giảng hoặc báo cáo thực nghiệm thuyết phục cần có cả đường thành công và đường lỗi.
+
+633
+01:12:20.708 --> 01:12:25.700
+Với đăng nhập, kiểm tra tài khoản đúng, sai và vai trò không hợp lệ.
+
+634
+01:12:25.900 --> 01:12:35.521
+Với nhập bảng tính, kiểm tra tệp đúng, thiếu cột, mã số sinh viên không tồn tại, điểm âm, điểm lớn hơn mười và mã số cá nhân sai.
+
+635
+01:12:35.721 --> 01:12:39.455
+Kiểm tra giảng viên không thể nhập học phần không phụ trách.
+
+636
+01:12:39.655 --> 01:12:51.623
+Với giải mã, kiểm tra phiên đăng nhập hết hạn, sai mã số cá nhân, học phần chưa có điểm, thiếu khóa công khai, không lấy đủ số nguyên tố và dịch vụ Java không phản hồi.
+
+637
+01:12:51.823 --> 01:13:00.420
+Với định lý số dư Trung Hoa, kiểm tra mã hóa rồi giải mã cho kết quả đúng và mọi dữ liệu rõ nằm trong không đến một trăm.
+
+638
+01:13:00.620 --> 01:13:11.095
+Với đổi mã số cá nhân, ghi C trước và sau, xác nhận điểm giữ nguyên, mã số cá nhân cũ không còn hợp lệ và giao dịch hoàn tác khi một bản ghi bị lỗi.
+
+639
+01:13:11.295 --> 01:13:17.652
+Các kết quả nên có mong đợi kết quả và thực tế kết quả thay vì chỉ ghi chung là thành công.
+
+640
+01:13:18.352 --> 01:13:23.536
+mã nguồn hiện không có bộ kiểm thử tự động đầy đủ trong các tập lệnh của dự án.
+
+641
+01:13:23.736 --> 01:13:36.259
+tháp kiểm thử nên bắt đầu bằng kiểm thử đơn vị cho chuẩn hóa, định lý số dư Trung Hoa kiểm tra mã hóa rồi giải mã, nghịch đảo theo phép chia dư, ngữ cảnh giá trị băm và vùng chỉ số.
+
+642
+01:13:36.459 --> 01:13:47.445
+kiểm thử tích hợp dựng hệ quản trị cơ sở dữ liệu và khối dịch vụ Java, gọi địa chỉ xử lý môi trường máy chủ với dữ liệu thật, xác minh C và dữ liệu mô tả.
+
+643
+01:13:47.645 --> 01:13:56.968
+kiểm thử đầu cuối đăng nhập ba vai trò, nhập dữ liệu bảng tính, xem điểm, đổi mã số cá nhân và kiểm tra dữ liệu sau khởi động lại.
+
+644
+01:13:57.168 --> 01:14:09.051
+bảo mật kiểm thử gửi mã số sinh viên khác, dò vét cạn mã số cá nhân, gói dữ liệu quá lớn, giả mạo yêu cầu liên trang, chiếm giữ mã phiên đăng nhập và sai cấu trúc C.
+
+645
+01:14:09.251 --> 01:14:19.768
+khả năng chịu lỗi chủ động kiểm thử tắt Java giữa lô dữ liệu, dừng cưỡng bức môi trường máy chủ giữa tác vụ nền đổi mã số cá nhân và tạo hai yêu cầu đồng thời.
+
+646
+01:14:19.968 --> 01:14:26.411
+Mỗi kiểm thử cần mong đợi cơ sở dữ liệu trạng thái, không chỉ giao thức truyền dữ liệu trạng thái.
+
+647
+01:14:26.611 --> 01:14:32.755
+Với bảo mật, kiểm thử nhật ký phải kiểm tra mã số cá nhân và dữ liệu rõ không xuất hiện.
+
+648
+01:14:32.955 --> 01:14:38.245
+Với đổi mã số cá nhân, chèn lỗi ở từng bước và chứng minh hoàn tác toàn bộ.
+
+649
+01:14:38.945 --> 01:14:47.308
+phép đo hiệu năng tốt phải có môi trường máy, phiên bản môi trường chạy, chạy làm nóng, số lần lặp, trung vị và phân vị.
+
+650
+01:14:47.508 --> 01:15:00.521
+Đo nhập dữ liệu cho một, một trăm, một nghìn và mười nghìn sinh viên; tách thời gian giao diện phía trước phân tích cú pháp, môi trường máy chủ kiểm tra hợp lệ, truy vấn hệ quản trị cơ sở dữ liệu,
+
+651
+01:15:00.721 --> 01:15:04.455
+vùng số nguyên tố, mã hóa và xác nhận giao dịch.
+
+652
+01:15:04.655 --> 01:15:08.345
+Đo xem điểm khi khởi động nguội và khi đã làm nóng.
+
+653
+01:15:08.545 --> 01:15:11.233
+Đo đổi mã số cá nhân theo số bản ghi.
+
+654
+01:15:11.433 --> 01:15:16.596
+Sau đó đo tấn công thử toàn bộ năm triệu vùng chỉ số và kết quả khớp giả.
+
+655
+01:15:16.796 --> 01:15:24.412
+Cuối cùng so với thuật toán mã hóa có xác thực hiện đại về thời gian, kích thước dữ liệu và thuộc tính bảo mật.
+
+656
+01:15:24.612 --> 01:15:31.759
+Nếu báo cáo đưa con số nhưng không có dữ liệu gốc nhật ký hoặc tập lệnh, đó chưa phải bằng chứng tái lập.
+
+657
+01:15:31.959 --> 01:15:39.297
+Nên lưu tệp dữ liệu dạng bảng, biểu đồ, xác nhận giao dịch giá trị băm và tập lệnh phép đo hiệu năng.
+
+658
+01:15:39.497 --> 01:15:48.841
+Kết quả có thể cho thấy định lý số dư Trung Hoa nhanh ở phép mô-đun nhưng tổng hệ thống bị chi phối bởi nhiều truy vấn và lời gọi qua mạng nội bộ.
+
+659
+01:15:49.541 --> 01:15:54.043
+Giới hạn thứ nhất: định lý số dư Trung Hoa không phải mã hóa chuẩn.
+
+660
+01:15:54.243 --> 01:15:58.253
+Có C và đúng bộ số nguyên tố thì lấy mô-đun là ra dữ liệu.
+
+661
+01:15:58.453 --> 01:16:10.997
+Giới hạn thứ hai: mã số cá nhân có miền nhỏ; băm trực tiếp bằng thuật toán hai trăm năm mươi sáu bit không muối ngẫu nhiên không phù hợp để chống dò ngoại tuyến trong môi trường vận hành thực tế.
+
+662
+01:16:11.197 --> 01:16:22.419
+Nên dùng các hàm dẫn xuất khóa chậm có muối và chi phí tính toán phù hợp với muối ngẫu nhiên và tham số chi phí phù hợp, đồng thời giới hạn tần suất ở luồng trực tuyến.
+
+663
+01:16:22.619 --> 01:16:27.269
+Giới hạn thứ ba: định lý số dư Trung Hoa không tự phát hiện C bị sửa.
+
+664
+01:16:27.469 --> 01:16:37.581
+Cần cơ chế toàn vẹn như mã kiểm tra tính toàn vẹn hoặc mã hóa có xác thực, ví dụ thuật toán mã hóa có xác thực hiện đại, nếu xây sản phẩm thật.
+
+665
+01:16:37.781 --> 01:16:47.403
+Giới hạn thứ tư: bí mật bảo vệ phiên đăng nhập, mật khẩu cơ sở dữ liệu và mã số cá nhân nạp dữ liệu khởi tạo không được dùng giá trị mặc định.
+
+666
+01:16:47.603 --> 01:16:55.325
+tác vụ nền đổi mã số cá nhân lưu trong bộ nhớ tạm không phù hợp khi khởi động lại hoặc mở rộng thành nhiều bản chạy.
+
+667
+01:16:55.525 --> 01:17:07.195
+Cuối cùng, quyền đọc dữ liệu số nguyên tố, khóa công khai, mã nguồn và giao diện lập trình ứng dụng phải được kiểm soát; không thể coi việc giấu thuật toán là bảo mật.
+
+668
+01:17:07.895 --> 01:17:17.580
+tính bí mật ở luồng giao diện được hỗ trợ bởi phiên đăng nhập và mã số cá nhân, nhưng với cơ sở dữ liệu bản sao dữ liệu cùng bảng số nguyên tố,
+
+669
+01:17:17.780 --> 01:17:21.961
+vùng chỉ số có thể thử toàn bộ nên không đạt mục tiêu mạnh.
+
+670
+01:17:22.161 --> 01:17:27.985
+tính toàn vẹn không có mã xác thực thông điệp hoặc thẻ; sửa C có thể không bị phát hiện.
+
+671
+01:17:28.185 --> 01:17:41.071
+tính xác thực có đăng nhập, thủ tục lưu sẵn, vai trò lớp kiểm tra trung gian và quyền sở hữu kiểm tra ở nhập điểm, nhưng mật khẩu và mã số cá nhân dùng giá trị băm nhanh không muối ngẫu nhiên,
+
+672
+01:17:41.271 --> 01:17:47.393
+địa chỉ xử lý xem điểm có lỗi đối tượng phân quyền và phiên đăng nhập chưa gia cố bảo mật.
+
+673
+01:17:47.593 --> 01:17:57.833
+khả năng sẵn sàng có hệ thống đóng gói dịch vụ quan hệ phụ thuộc rõ và nạp dữ liệu khởi tạo kiểm tra mã thoát mã nguồn, nhưng Java là điểm lỗi đơn,
+
+674
+01:17:58.033 --> 01:18:01.639
+phiên đăng nhập cùng tác vụ nền nằm trong bộ nhớ tạm.
+
+675
+01:18:01.839 --> 01:18:05.273
+Bảng này không phủ nhận khối lượng phần cài đặt thực tế.
+
+676
+01:18:05.473 --> 01:18:17.441
+Nó giúp mô tả đúng mức: bản thử nghiệm học thuật có luồng hoàn chỉnh và nhiều biện pháp kiểm soát ứng dụng, nhưng cơ chế bảo vệ dữ liệu khi lưu trữ chưa đạt tiêu chuẩn mật mã hiện đại.
+
+677
+01:18:18.141 --> 01:18:24.157
+địa chỉ xử lý yêu cầu đọc khóa cá nhân là ví dụ vì sao không đánh giá theo tên chức năng.
+
+678
+01:18:24.357 --> 01:18:30.181
+mã nguồn khai báo một biến thông tin truy vấn nhưng lại gọi biến truy vấn không tồn tại.
+
+679
+01:18:30.381 --> 01:18:38.360
+Nó còn gọi đường dẫn Java sinh viên khóa mà bộ điều khiển hiện không cung cấp, và phần phản hồi thành công bị chú thích.
+
+680
+01:18:38.560 --> 01:18:44.128
+Vì vậy chức năng này không thể được xem là đã triển khai chỉ vì địa chỉ xử lý có tên.
+
+681
+01:18:44.328 --> 01:18:54.867
+Lựa chọn tốt nhất là xóa nhánh cũ cần loại bỏ nếu luồng mới không dùng, hoặc viết quy ước giao tiếp, bộ điều khiển, kiểm thử và phản hồi hoàn chỉnh.
+
+682
+01:18:55.067 --> 01:19:01.509
+không còn hoạt động mã nguồn làm tăng bề mặt tấn công và khiến người bảo trì hiểu sai kiến trúc.
+
+683
+01:19:01.709 --> 01:19:06.915
+Trong bài giảng phần trình diễn không nên trình bày chức năng này như đang hoạt động.
+
+684
+01:19:07.615 --> 01:19:17.215
+Để phát triển tiếp, trước hết tách lớp kiểm tra trung gian xác thực và phân quyền, kiểm tra quyền theo từng tài nguyên chứ không chỉ theo vai trò.
+
+685
+01:19:17.415 --> 01:19:22.961
+Sinh viên chỉ truy cập bản ghi của mình; giảng viên chỉ thao tác học phần mình phụ trách.
+
+686
+01:19:23.161 --> 01:19:32.655
+Toàn bộ kết nối phải dùng lớp bảo mật đường truyền, bí mật được đưa vào hệ thống quản lý bí mật, khóa có quy trình luân chuyển và thu hồi.
+
+687
+01:19:32.855 --> 01:19:41.324
+mã số cá nhân và mật khẩu dùng hàm dẫn xuất chậm có muối ngẫu nhiên, kết hợp giới hạn tần suất, khóa tạm thời và cảnh báo.
+
+688
+01:19:41.524 --> 01:19:53.727
+Nếu mục tiêu là bảo mật thực tế, có thể giữ định lý số dư Trung Hoa như lớp biểu diễn dữ liệu nhưng bọc giá trị hoặc ngữ cảnh nhạy cảm bằng thuật toán mã hóa có xác thực hiện đại,
+
+689
+01:19:53.927 --> 01:19:57.895
+hoặc dùng mã kiểm tra tính toàn vẹn để phát hiện sửa đổi.
+
+690
+01:19:58.095 --> 01:20:07.460
+dịch vụ Java cần tính xác thực nội bộ, tình trạng dịch vụ địa chỉ xử lý, quá thời gian chờ, thử lại có giới hạn và cơ chế ngắt mạch.
+
+691
+01:20:07.660 --> 01:20:14.785
+tác vụ nền đổi mã số cá nhân nên chạy trên hàng đợi bền vững, có trạng thái có thể chạy lặp lại an toàn,
+
+692
+01:20:14.985 --> 01:20:20.041
+khả năng tiếp tục sau khởi động lại và chỉ số đo lường đo thời gian xử lý.
+
+693
+01:20:20.741 --> 01:20:30.235
+Một thiết kế môi trường vận hành thực tế có thể giữ định lý số dư Trung Hoa như mô-đun học thuật nhưng dùng mã hóa kèm xác thực làm lớp bảo vệ thật.
+
+694
+01:20:30.435 --> 01:20:35.000
+Mỗi miền dữ liệu có khóa mã hóa dữ liệu ngẫu nhiên đủ độ ngẫu nhiên.
+
+695
+01:20:35.200 --> 01:20:41.024
+thuật toán mã hóa có xác thực hiện đại mã hóa gói dữ liệu điểm và tạo thẻ xác thực.
+
+696
+01:20:41.224 --> 01:20:44.403
+giá trị chỉ dùng một lần phải duy nhất theo khóa.
+
+697
+01:20:44.603 --> 01:20:55.419
+dữ liệu liên kết gồm mã sinh viên, mã học phần, năm, kỳ, phiên bản thuật toán và mã định danh bản ghi nên tráo dữ liệu mô tả làm giải mã thất bại.
+
+698
+01:20:55.619 --> 01:21:06.136
+dữ liệu khóa được hệ thống quản lý khóa hoặc thiết bị bảo mật phần cứng bọc bằng khóa mã hóa khóa; ứng dụng chỉ nhận quyền giải mã theo vai trò và kiểm toán.
+
+699
+01:21:06.336 --> 01:21:13.867
+mã số cá nhân của người dùng được dùng để xác thực hoặc mở một luồng xác thực, không làm khóa dữ liệu trực tiếp.
+
+700
+01:21:14.067 --> 01:21:18.739
+mật khẩu và mã số cá nhân lưu bằng hàm dẫn xuất khóa chậm có bộ nhớ.
+
+701
+01:21:18.939 --> 01:21:25.531
+cơ sở dữ liệu lưu bản mã, giá trị chỉ dùng một lần, thẻ, mã định danh khóa và phiên bản.
+
+702
+01:21:25.731 --> 01:21:32.067
+Cách này giải quyết tính bí mật và tính toàn vẹn rõ ràng hơn, đồng thời hỗ trợ luân chuyển.
+
+703
+01:21:32.267 --> 01:21:40.395
+định lý số dư Trung Hoa có thể chạy song song để minh họa và so sánh phép đo hiệu năng, nhưng không phải hàng rào duy nhất.
+
+704
+01:21:41.095 --> 01:21:45.553
+chuyển đổi dữ liệu không thể chỉ đổi lược đồ dữ liệu rồi xóa C.
+
+705
+01:21:45.753 --> 01:21:51.855
+Trước hết danh mục phiên bản thuật toán, khóa phiên bản và bản ghi thiếu bản chụp ngữ cảnh.
+
+706
+01:21:52.055 --> 01:21:57.708
+Tạm dừng ghi hoặc dùng ghi song song hai định dạng có khả năng chạy lặp lại an toàn.
+
+707
+01:21:57.908 --> 01:22:07.081
+Với mỗi C cũ, dùng ngữ cảnh và thông tin xác thực hợp lệ để tái lập số nguyên tố, giải mã ba số, kiểm tra miền và công thức.
+
+708
+01:22:07.281 --> 01:22:16.775
+Sau đó tạo gói dữ liệu chuẩn, mã hóa bằng mã hóa kèm xác thực và lưu bản mã, giá trị chỉ dùng một lần, thẻ, mã định danh khóa.
+
+709
+01:22:16.975 --> 01:22:19.471
+đọc lại và giải mã để xác minh.
+
+710
+01:22:19.671 --> 01:22:24.876
+Ghi kiểm toán cùng giá trị băm của dữ liệu trước sau, không ghi dữ liệu rõ.
+
+711
+01:22:25.076 --> 01:22:30.623
+Chỉ khi tỷ lệ đối soát đạt một trăm phần trăm mới chuyển luồng đọc sang định dạng mới.
+
+712
+01:22:30.823 --> 01:22:37.927
+Giữ bản sao mã hóa của dữ liệu cũ trong thời hạn hoàn tác, giới hạn quyền, rồi loại bỏ theo chính sách.
+
+713
+01:22:38.127 --> 01:22:43.311
+bản ghi không giải mã được phải vào vùng cách ly, không được tự đoán điểm.
+
+714
+01:22:44.011 --> 01:22:47.680
+Trước khi kết thúc, hãy tự trả lời các câu hỏi sau.
+
+715
+01:22:47.880 --> 01:22:50.632
+Một, vì sao mô-đun phải lớn hơn một trăm?
+
+716
+01:22:50.832 --> 01:22:54.864
+Hai, nếu muốn giữ hai chữ số thập phân thì phải thay đổi gì?
+
+717
+01:22:55.064 --> 01:23:01.293
+Ba, vì sao giao diện phía trước đọc bảng tính nhưng máy chủ phía sau vẫn phải kiểm tra lại?
+
+718
+01:23:01.493 --> 01:23:05.632
+Bốn, tại sao Java không truy vấn máy chủ cơ sở dữ liệu?
+
+719
+01:23:05.832 --> 01:23:14.600
+Năm, giảng viên và sinh viên dùng cặp mã số cá nhân khóa công khai khác nhau nhưng vẫn tạo cùng bí mật dùng chung bằng cách nào?
+
+720
+01:23:14.800 --> 01:23:18.469
+Sáu, chỉ số bắt đầu được tính từ những thành phần nào?
+
+721
+01:23:18.669 --> 01:23:24.771
+Bảy, bảng điểm định lý số dư Trung Hoa lưu dữ liệu gì và cố ý không lưu dữ liệu gì?
+
+722
+01:23:24.971 --> 01:23:27.851
+Tám, vì sao C được lưu dạng chuỗi?
+
+723
+01:23:28.051 --> 01:23:32.979
+Chín, điều gì xảy ra nếu đổi mã số cá nhân mà không mã hóa lại C?
+
+724
+01:23:33.179 --> 01:23:41.520
+Mười, vì sao định lý số dư Trung Hoa không thể thay thế hoàn toàn thuật toán mã hóa đối xứng hoặc một hệ mật mã hiện đại?
+
+725
+01:23:41.720 --> 01:23:47.139
+Nếu giải thích trôi chảy mười câu này, bạn đã nắm được phần cốt lõi của đề tài.
+
+726
+01:23:47.839 --> 01:23:50.697
+Năm câu trên dễ bị phản biện bằng mã nguồn.
+
+727
+01:23:50.897 --> 01:23:54.673
+định lý số dư Trung Hoa không phải mã hóa kèm xác thực.
+
+728
+01:23:54.873 --> 01:24:00.228
+cơ sở dữ liệu bản sao dữ liệu cùng dữ liệu số nguyên tố cho phép thử toàn bộ.
+
+729
+01:24:00.428 --> 01:24:03.372
+Không gian vùng chỉ số chỉ khoảng năm triệu.
+
+730
+01:24:03.572 --> 01:24:10.783
+tệp hệ quản trị cơ sở dữ liệu còn bảng dữ liệu gốc có điểm giữa kỳ, điểm cuối kỳ, điểm trung bình.
+
+731
+01:24:10.983 --> 01:24:17.831
+thông tin xác thực, nhật ký, phiên đăng nhập, tính toàn vẹn và lược đồ dữ liệu đều còn vấn đề.
+
+732
+01:24:18.031 --> 01:24:32.153
+Cách nói tốt hơn là: hệ thống là bản thử nghiệm học thuật học thuật tích hợp định lý số dư Trung Hoa vào luồng quản lý điểm; bảng điểm định lý số dư Trung Hoa không lưu trực tiếp ba cột điểm; phiên đăng nhập,
+
+733
+01:24:32.353 --> 01:24:43.489
+mã số cá nhân và ngữ cảnh kiểm soát luồng hợp lệ; nhưng triển khai thật cần mã hóa kèm xác thực, hàm dẫn xuất khóa mạnh, hệ thống quản lý khóa và gia cố bảo mật.
+
+734
+01:24:43.689 --> 01:24:48.809
+Thừa nhận giới hạn không làm đồ án yếu đi; nó cho thấy nhóm hiểu mô hình đe dọa.
+
+735
+01:24:49.509 --> 01:24:52.069
+Đồ án có khối lượng triển khai đáng kể.
+
+736
+01:24:52.269 --> 01:24:57.176
+giao diện phía trước đọc bảng tính và gọi giao diện lập trình ứng dụng thật.
+
+737
+01:24:57.376 --> 01:25:03.008
+môi trường máy chủ quản lý phiên đăng nhập, nghiệp vụ và hệ quản trị cơ sở dữ liệu.
+
+738
+01:25:03.208 --> 01:25:07.517
+Java thực hiện định lý số dư Trung Hoa bằng kiểu số nguyên lớn.
+
+739
+01:25:07.717 --> 01:25:11.899
+bảng điểm định lý số dư Trung Hoa lưu C cùng dữ liệu mô tả.
+
+740
+01:25:12.099 --> 01:25:18.669
+lớp kiểm tra trung gian vai trò và kiểm tra giảng viên phụ trách học phần nằm ở máy chủ phía sau.
+
+741
+01:25:18.869 --> 01:25:26.912
+Phần đổi mã số cá nhân triển khai giao dịch, khóa dòng, so cũ C, đọc lại và hoàn tác; đây là điểm mạnh nhất.
+
+742
+01:25:27.112 --> 01:25:35.965
+hệ thống đóng gói dịch vụ cấu hình dịch vụ chỉ công bố giao diện phía trước, còn Java và hệ quản trị cơ sở dữ liệu ở mạng nội bộ.
+
+743
+01:25:36.165 --> 01:25:42.267
+Khi bảo vệ, nên đưa từng ưu điểm về tệp và luồng cụ thể, không chỉ nói hệ thống đầy đủ.
+
+744
+01:25:42.967 --> 01:25:50.945
+số nguyên tố phải lớn hơn một trăm để phần dư giữ nguyên điểm chuẩn hóa và các số nguyên tố khác nhau bảo đảm nghịch đảo.
+
+745
+01:25:51.145 --> 01:25:58.847
+M là tích số nguyên tố, M i bằng M chia p i, y i là nghịch đảo M i theo p i, C là tổng a i M i y i mô-đun M.
+
+746
+01:25:59.047 --> 01:26:06.023
+bí mật dùng chung chỉ tham gia giá trị băm để chọn vùng chỉ số, không trực tiếp tạo một khóa mã hóa C.
+
+747
+01:26:06.223 --> 01:26:14.329
+định lý số dư Trung Hoa không đủ tính bí mật vì biết số nguyên tố là lấy mô-đun; không đủ tính toàn vẹn vì không có thẻ.
+
+748
+01:26:14.529 --> 01:26:24.065
+Nếu được hỏi cách sửa, trả lời mã hóa kèm xác thực và quản lý khóa chuẩn, đồng thời giữ định lý số dư Trung Hoa như minh họa toán học.
+
+749
+01:26:24.765 --> 01:26:31.016
+khóa chính bảng điểm định lý số dư Trung Hoa thiếu năm và học kỳ nên học lại có thể ghi đè.
+
+750
+01:26:31.216 --> 01:26:37.915
+máy chủ phía sau kiểm tra sinh viên tồn tại nhưng cần liên kết bảng đăng ký học phần theo học phần.
+
+751
+01:26:38.115 --> 01:26:43.405
+lô dữ liệu nhập hiện không có giao dịch toàn cục nên có thể thành công một phần.
+
+752
+01:26:43.605 --> 01:26:55.189
+địa chỉ xử lý xem danh sách điểm ưu tiên mã số sinh viên trong phần thân yêu cầu nên có lỗi đối tượng phân quyền; phải lấy mã số sinh viên từ phiên đăng nhập cho sinh viên.
+
+753
+01:26:55.389 --> 01:27:00.189
+Bốn câu này cho thấy hiểu nghiệp vụ và mã nguồn, không chỉ thuật toán.
+
+754
+01:27:00.889 --> 01:27:04.857
+phần trình diễn nên quay cùng một bản ghi từ đầu đến cuối.
+
+755
+01:27:05.057 --> 01:27:09.559
+Trước đổi mã số cá nhân, ghi lại C, khóa phiên bản và điểm.
+
+756
+01:27:09.759 --> 01:27:11.273
+Đổi mã số cá nhân.
+
+757
+01:27:11.473 --> 01:27:16.529
+Sau đó chứng minh C thay đổi, khóa phiên bản tăng nhưng ba điểm không đổi.
+
+758
+01:27:16.729 --> 01:27:25.177
+Tiếp theo thử mã số cá nhân sai, giảng viên không phụ trách, sinh viên gửi mã số sinh viên khác và Java bị tắt giữa luồng.
+
+759
+01:27:25.377 --> 01:27:31.607
+Hiển thị giao thức truyền dữ liệu trạng thái, thông báo giao diện và trạng thái cơ sở dữ liệu.
+
+760
+01:27:31.807 --> 01:27:35.369
+Không dùng hai bản ghi khác nhau để so C trước sau.
+
+761
+01:27:35.569 --> 01:27:38.364
+Kèm mốc thời gian và tập lệnh truy vấn.
+
+762
+01:27:38.564 --> 01:27:42.276
+Một phần trình diễn như vậy biến tuyên bố thành bằng chứng.
+
+763
+01:27:42.976 --> 01:27:51.381
+Tóm lại, giá trị của đồ án không nằm ở một màn hình các thao tác thêm, đọc, sửa và xóa hay một công thức đứng riêng lẻ.
+
+764
+01:27:51.581 --> 01:28:04.403
+Chuỗi bằng chứng đầy đủ là: giảng viên hợp lệ nhập dữ liệu cho học phần mình phụ trách; giao diện phía trước chuyển bảng tính thành dữ liệu có cấu trúc; máy chủ phía sau kiểm tra phiên đăng nhập, quyền,
+
+765
+01:28:04.603 --> 01:28:16.037
+mã số cá nhân và ngữ cảnh; Java dẫn xuất vùng số nguyên tố và mã hóa ba điểm thành C; máy chủ cơ sở dữ liệu lưu C cùng ngữ cảnh thay vì lưu trực tiếp điểm giữa kỳ,
+
+766
+01:28:16.237 --> 01:28:29.293
+điểm cuối kỳ và điểm trung bình trong bảng điểm định lý số dư Trung Hoa; sinh viên hợp lệ nhập mã số cá nhân để tái lập cùng bộ số nguyên tố và khôi phục đúng điểm; khi mã số cá nhân thay đổi,
+
+767
+01:28:29.493 --> 01:28:37.088
+hệ thống giải mã bằng tham số cũ, mã hóa lại bằng tham số mới trong giao dịch, tạo C mới nhưng bảo toàn điểm.
+
+768
+01:28:37.288 --> 01:28:47.123
+định lý số dư Trung Hoa trong dự án là một cơ chế học thuật có giới hạn, nhưng hệ thống đã minh họa rõ cách tích hợp toán học, cơ sở dữ liệu,
+
+769
+01:28:47.323 --> 01:28:50.928
+trang web và bảo mật thành một luồng phần mềm hoàn chỉnh.
+
+770
+01:28:51.628 --> 01:28:54.188
+Ưu tiên không bắt đầu từ giao diện.
+
+771
+01:28:54.388 --> 01:29:04.628
+P không gồm sửa cách tuyên bố hoặc bổ sung mã hóa kèm xác thực, thay giá trị băm thông tin xác thực, vá mã số sinh viên và xóa nhật ký nhạy cảm.
+
+772
+01:29:04.828 --> 01:29:13.809
+P một gồm sửa khóa bảng điểm định lý số dư Trung Hoa, kiểm tra đăng ký học phần, giao dịch lô dữ liệu và bảo vệ tính toàn vẹn.
+
+773
+01:29:14.009 --> 01:29:22.628
+P hai gồm kho lưu phiên đăng nhập bền vững, tạo lại, dịch vụ tính xác thực, giả mạo yêu cầu liên trang và kiểm thử tự động.
+
+774
+01:29:22.828 --> 01:29:29.313
+P ba tối ưu truy vấn, phép đo hiệu năng, bảng điều khiển và tài liệu chuyển đổi dữ liệu.
+
+775
+01:29:29.513 --> 01:29:33.567
+Mỗi mục cần chủ sở hữu, kiểm thử chấp nhận và bằng chứng.
+
+776
+01:29:33.767 --> 01:29:39.655
+Sau khi hoàn thành P không và P một, đồ án sẽ đứng vững hơn nhiều trước câu hỏi bảo mật.
+
+777
+01:29:40.355 --> 01:29:51.491
+Giá trị chính của dự án là đưa định lý số dư Trung Hoa từ công thức vào một hệ thống nhiều thành phần có nhập bảng tính, phân quyền, cơ sở dữ liệu, dịch vụ Java,
+
+778
+01:29:51.691 --> 01:29:54.123
+xem điểm và đổi mã số cá nhân.
+
+779
+01:29:54.323 --> 01:30:00.189
+Công thức kiểu số nguyên lớn và quy trình đổi mã số cá nhân cho thấy nỗ lực kỹ thuật thật.
+
+780
+01:30:00.389 --> 01:30:06.149
+Nhưng an toàn mật mã phải được đánh giá theo mô hình đe dọa, không theo tên thuật toán.
+
+781
+01:30:06.349 --> 01:30:16.440
+Khi lộ cơ sở dữ liệu và bảng số nguyên tố, tính bí mật yếu; khi C bị sửa, không có thẻ; thông tin xác thực và phiên đăng nhập cần gia cố bảo mật.
+
+782
+01:30:16.640 --> 01:30:29.909
+Cách bảo vệ đồ án tốt nhất là trình bày đúng mức, chứng minh phần cài đặt thực tế bằng mã nguồn và phần trình diễn, công bố phép đo hiệu năng cùng giới hạn, rồi đưa ra lộ trình mã hóa kèm xác thực,
+
+783
+01:30:30.109 --> 01:30:34.077
+hệ thống quản lý khóa, hàm dẫn xuất khóa và kiểm thử.
+
+784
+01:30:34.277 --> 01:30:36.688
+Đó là kết thúc của bài giảng dài.
+
+785
+01:30:36.888 --> 01:30:42.861
+Hãy quay lại từng mô-đun, dừng ở công thức và tự trả lời các câu hỏi trước khi thuyết trình.

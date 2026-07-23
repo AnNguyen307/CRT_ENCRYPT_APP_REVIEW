@@ -1,0 +1,18 @@
+HỌC VIỆN CRT — BẢN VIDEO VÀ AUDIO TIẾNG VIỆT
+
+Cách mở ngoại tuyến:
+1. Giải nén toàn bộ tệp ZIP.
+2. Giữ nguyên các thư mục assets, evidence và media bên cạnh index.html.
+3. Mở index.html bằng Chrome hoặc Edge.
+4. Chọn mục "Video toàn diện" ở thanh điều hướng.
+
+Bản này gồm:
+- Video bài giảng 1 giờ 30 phút 44 giây, giọng nam miền Bắc.
+- 79 phần nội dung và 785 đoạn phụ đề tiếng Việt.
+- Audio MP3 49 phút 42 giây được biên soạn riêng để nghe và hiểu dự án, không phải âm thanh tách từ video.
+- Mục Audio có 9 mốc bấm để chuyển nhanh giữa mở đầu và 8 chương.
+- Có kèm kịch bản bài nghe độc lập trong thư mục media.
+
+Nếu trình duyệt chặn tài nguyên khi mở trực tiếp, hãy chạy một máy chủ tĩnh
+tại thư mục này, ví dụ: python -m http.server 8000, rồi mở
+http://localhost:8000.
